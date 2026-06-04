@@ -91,7 +91,7 @@
                     <div class="tech-desc">
                         <h4 style="color: #00adb5; margin-top:0;">1. Conversion Noir & Blanc</h4>
                         <p>Le shader calcule d'abord la luminance de la scène à l'aide d'un produit scalaire (dot product) avec les coefficients standards de perception visuelle (Rec. 601).</p>
-                        <p>Une simple condition basée sur une variable float (`_IsBlackAndWhite`) permet d'activer ou de désactiver dynamiquement le mode.</p>
+                        <p>Une simple condition basée sur une variable float "_IsBlackAndWhite" permet d'activer ou de désactiver dynamiquement le mode.</p>
                         <img src="BlackAndWhitPostProcess.png" style="width: 100%; border-radius: 6px; margin-top: 10px;" alt="Aperçu N&B">
                     </div>
                     <div class="tech-code">
@@ -109,7 +109,7 @@
                     <div class="tech-desc">
                         <h4 style="color: #00adb5; margin-top:0;">2. Effet de Flicker (Saut de lumière)</h4>
                         <p>Pour simuler les variations d'intensité lumineuse d'un vieux projecteur, j'utilise une fonction de hachage (`hash`) basée sur le temps.</p>
-                        <p>L'utilisation de la fonction `floor()` permet de bloquer le bruit sur des paliers nets. La fonction `pow()` accentue la rareté et la brutalité des baisses de lumière selon la variable `_FlickerSharpness` choisie par l'utilisateur.</p>
+                        <p>L'utilisation de la fonction "floor()" permet de bloquer le bruit sur des paliers nets. La fonction "pow()" accentue la rareté et la brutalité des baisses de lumière selon la variable "_FlickerSharpness" choisie par l'utilisateur.</p>
                         <img src="FlickeringPostProcess.gif" style="width: 100%; border-radius: 6px; margin-top: 10px;" alt="Aperçu Flicker">
                     </div>
                     <div class="tech-code">
@@ -126,8 +126,8 @@ color *= (<span class="c-var">1.0</span> - flicker);</code></pre>
                 <div class="tech-row">
                     <div class="tech-desc">
                         <h4 style="color: #00adb5; margin-top:0;">3. Génération de Rayures Procedurales</h4>
-                        <p>Les rayures verticales de la pellicule sont créées en découpant l'écran en colonnes via une grille UV unidimensionnelle (`gridX`).</p>
-                        <p>Si une colonne passe le test de probabilité aléatoire, une ligne est tracée. On génère ensuite des interruptions horizontales via un `breakModifier` pour éviter d'avoir de bêtes lignes continues et droites. Enfin, l'effet applique soit une ombre portée (rayure noire), soit une brûlure (rayure blanche).</p>
+                        <p>Les rayures verticales de la pellicule sont créées en découpant l'écran en colonnes via une grille UV unidimensionnelle "gridX".</p>
+                        <p>Si une colonne passe le test de probabilité aléatoire, une ligne est tracée. On génère ensuite des interruptions horizontales via un "breakModifier" pour éviter d'avoir de bêtes lignes continues et droites. Enfin, l'effet applique soit une ombre portée (rayure noire), soit une brûlure (rayure blanche).</p>
                         <img src="RayuresPostProcess.gif" style="width: 100%; border-radius: 6px; margin-top: 10px;" alt="Aperçu Rayures">
                     </div>
                     <div class="tech-code">
@@ -150,7 +150,7 @@ color *= (<span class="c-var">1.0</span> - flicker);</code></pre>
                     <div class="tech-desc">
                         <h4 style="color: #00adb5; margin-top:0;">4. Grains & Poussières de Lentille</h4>
                         <p>Au lieu d'utiliser une texture de bruit en boucle, le grain est entièrement mathématique et procédural.</p>
-                        <p>Il tourne sur un algorithme de bruit cellulaire à l'aide d'une double boucle `for` qui vérifie les cellules voisines. Cela permet de générer des micro-points et des agrégats de poussière uniques à chaque frame, assurant une dynamique ultra-réaliste.</p>
+                        <p>Il tourne sur un algorithme de bruit cellulaire à l'aide d'une double boucle "for" qui vérifie les cellules voisines. Cela permet de générer des micro-points et des agrégats de poussière uniques à chaque frame, assurant une dynamique ultra-réaliste.</p>
                         <img src="GrainPostProcessing.gif" style="width: 100%; border-radius: 6px; margin-top: 10px;" alt="Aperçu Grain">
                     </div>
                     <div class="tech-code">
