@@ -67,6 +67,7 @@
         <h3>Here are my Tools</h3>
         <p style="text-align: center; color: #aaa; margin-bottom: 40px;">Showcasing editor tools and pipelines developed to optimize team workflow and save development time.</p>
 
+        <!-- ACCORDION: 3D TEXTURE GENERATOR -->
         <details class="tool-accordion">
             <summary>Procedural 3D Texture Generator (Unity Editor / C#)</summary>
             <div class="tool-content">
@@ -118,6 +119,7 @@
 
                 <hr style="border: 0; border-top: 1px solid #333; margin: 40px 0;">
 
+                <!-- STEP 1 -->
                 <div class="tech-row">
                     <div class="tech-desc">
                         <h4 style="color: #00adb5; margin-top:0;">1. Initializing the Texture3D Container</h4>
@@ -130,6 +132,7 @@ texture.filterMode = FilterMode.Bilinear;</code></pre>
                     </div>
                 </div>
 
+                <!-- STEP 2 -->
                 <div class="tech-row">
                     <div class="tech-desc">
                         <h4 style="color: #00adb5; margin-top:0;">2. Mathematical Simplex Sampling</h4>
@@ -143,6 +146,7 @@ colors[index] = <span class="c-keyword">new</span> Color(noiseValue, noiseValue,
                     </div>
                 </div>
 
+                <!-- STEP 3 -->
                 <div class="tech-row">
                     <div class="tech-desc">
                         <h4 style="color: #00adb5; margin-top:0;">3. Data Writing & UX Selection Focus</h4>
@@ -170,6 +174,112 @@ texture.Apply();
                 <h4 style="color: #00adb5; margin-top:30px;">Technical Breakdown & Future Outlooks</h4>
                 <p>This tool successfully created an immediate iteration loop for generating noise variants. However, because the computational logic currently runs entirely on the <strong>CPU</strong>, generation times can scale drastically up when computing higher resolution grids (e.g., 256³).</p>
                 <p style="font-style: italic; color: #aaa;">Project Note: As the pipeline pivoted away from using this specific resource type, further development on the tool was halted. Future steps would have involved shifting the generation mathematical load onto the GPU via Compute Shaders, alongside implementing Worley and Fractal Brownian Motion (FBM) noise algorithms.</p>
+
+            </div>
+        </details>
+
+        <!-- ACCORDION: PROCEDURAL MODULAR MAP GENERATOR -->
+        <details class="tool-accordion">
+            <summary>Modular Map & Level Generator (Unity Editor / C#)</summary>
+            <div class="tool-content">
+                
+                <p style="font-size: 1.1em; color: #aaa; text-align: center;">An editor-integrated pipeline tool developed to automatically instantiate and align modular environments (rooms, corridors) based on manual layout anchor points.</p>
+
+                <div class="center-img-container">
+                    <img src="mapgen-workflow-demo.gif" alt="Procedural Map Generation Tool Demonstration">
+                    <p style="color: #888; font-size: 0.9em; margin-top: 5px;">Real-time modular environment instantiation directly in the Scene View</p>
+                </div>
+
+                <h4 style="color: #00adb5; border-bottom: 1px solid #333; padding-bottom: 5px;">Objective & Workflow</h4>
+                <p>Built to accelerate grayboxing, prototyping, and layout assembly phases. The system allows designers to map out pathways or room outlines via anchor nodes, instantly managing the correct placement and orientation of walls, corner trims, floors, and ceilings.</p>
+
+                <h4 style="color: #00adb5; border-bottom: 1px solid #333; padding-bottom: 5px; margin-top: 30px;">Tool Architecture & Editor UI</h4>
+                <p>To strictly separate core generation mathematics from interface rendering, the pipeline is decoupled into two primary C# components:</p>
+                <ul class="bullet-list">
+                    <li><span class="highlight">MapGeneratorEditor:</span> A custom Inspector implementation providing an ergonomic layout window with instant controls.</li>
+                    <li><span class="highlight">MapGenerator:</span> The underlying modular processing engine handling geometry routines and asset pooling.</li>
+                </ul>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Inspector Button</th>
+                            <th>Internal Operation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="highlight">Generate Map</td>
+                            <td>Triggers the full layout generation pass based on active anchor data.</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight">Clear Map</td>
+                            <td>Safely purges and resets previous procedural instances to ensure clean scene state.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="center-img-container">
+                    <img src="mapgen-ui-inspector.png" alt="Custom Unity Inspector UI layout">
+                </div>
+
+                <h4 style="color: #00adb5; border-bottom: 1px solid #333; padding-bottom: 5px; margin-top: 30px;">Path Logic & Generation Routine</h4>
+                <p>Environmental data structures are declared via structural vectors. Each custom path segment handles data collections such as an array of anchor nodes, section branding names, open/closed loop Boolean parameters, and tiling flags for ceilings and floors.</p>
+                
+                <hr style="border: 0; border-top: 1px solid #333; margin: 40px 0;">
+
+                <!-- STEP 1 -->
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">1. Wall Fitting & Corner Tracking</h4>
+                        <p>The system iterates along anchor arrays to compute segment directions and distances. Wall prefabs are automatically spawned at consistent steps along the segment vector, inheriting matching rotational data.</p>
+                        <p>Where two distinct segments meet, corner angle calculations trigger specific trim prefab variants to prevent ugly physical overlaps.</p>
+                    </div>
+                    <div class="tech-code">
+<pre><code><span class="c-keyword">Vector3</span> direction = (targetNode - startNode).normalized;
+<span class="c-keyword">Quaternion</span> wallRotation = <span class="c-keyword">Quaternion</span>.LookRotation(direction);
+<span class="c-keyword">GameObject</span> wall = Instantiate(wallPrefab, spawnPos, wallRotation);</code></pre>
+                    </div>
+                </div>
+
+                <!-- STEP 2 -->
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">2. Smart Flood Fill Tiling</h4>
+                        <p>Placing thousands of floor and ceiling units by hand is counterproductive. To bypass this, an initial bounding grid array is laid down following structural boundaries.</p>
+                        <p>Then, a customized <strong>Flood Fill propagation algorithm</strong> automatically crawls empty spaces, scanning adjacent neighbor entries to cleanly patch inner rooms without tile duplication.</p>
+                    </div>
+                    <div class="tech-code">
+<pre><code><span class="c-keyword">if</span> (!tileRegistry.Contains(targetPos) && CheckNeighbors(targetPos)) 
+{
+    SpawnGridElement(targetPos);
+    tileRegistry.Add(targetPos);
+}</code></pre>
+                    </div>
+                </div>
+
+                <!-- STEP 3 -->
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">3. Hierarchy Routing & Bounds Check</h4>
+                        <p>For closed layouts, geometric poly-checks ensure tiles never leak outside designated perimeters. Instantiated assets are categorized automatically inside a strict nested structure to ensure easy debugging.</p>
+                    </div>
+                    <div class="tech-code">
+<pre><code><span class="c-keyword">Transform</span> roomParent = <span class="c-keyword">new</span> <span class="c-keyword">GameObject</span>(roomName).transform;
+roomParent.SetParent(mapRootContainer);
+wallInstance.transform.SetParent(roomParent);</code></pre>
+                    </div>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid #333; margin: 40px 0;">
+
+                <h4 style="color: #00adb5; margin-top:30px;">Production Impact & Key Takeaways</h4>
+                <p>The implementation of this tool was highly successful, saving substantial production time by bypassing the repetitive task of manually positioning over 3,000 modular tiles and hundreds of walls. Whenever structural parameters evolved, regenerating the entire base infrastructure only required adjusting a few anchor positions.</p>
+                
+                <ul class="bullet-list">
+                    <li><span class="highlight">Design Constraints:</span> The tool operated under specific design limits—anchor distances required increments of 2 units to strictly match the 2-meter physical dimensions of the core wall assets.</li>
+                    <li><span class="highlight">Human Intervention:</span> The framework was purposefully built as an infrastructure layout generator rather than an absolute automated solution. Level designers still stepped in manually to populate the environments with props, interactive doors, and fix minor corner overlaps where custom shapes deviated from the 2-meter tile metric.</li>
+                </ul>
 
             </div>
         </details>
