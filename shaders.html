@@ -175,13 +175,59 @@ color *= (<span class="c-var">1.0</span> - flicker);</code></pre>
             </div>
         </details>
 
-        <details class="shader-accordion">
-            <summary>Shader: Outline / Drawing (Cel-Shading)</summary>
+        <details class="shader-accordion" open>
+            <summary>Shader: Procedural Outline & Hatching (Shader Graph / HDRP)</summary>
             <div class="shader-content">
-                <p>Next project to be documented in the same manner...</p>
+                
+                <p style="text-align: center; font-size: 1.1em; color: #aaa;">To improve the game's readability and player guidance, we required a clear visual feedback system to highlight interactable objects. I designed a procedural outline and anime-style hatching effect built entirely with Unity Shader Graph.</p>
+                
+                <div class="global-gifs">
+                    <img src="OutlineShowcase.gif" style="width: 100%;" alt="Outline Effect Showcase">
+                </div>
+                
+                <div class="settings-img-container">
+                    <p style="color: #00adb5; font-weight: bold; margin-bottom: 10px;">HDRP Custom Pass Rendering Architecture:</p>
+                    <p style="font-size: 0.95em; color: #aaa; max-width: 800px; margin: 0 auto 15px auto; text-align: left;">Instead of assigning this material directly to objects, the effect is injected into the rendering pipeline using an HDRP <strong>Custom Pass (DrawRenderersCustomPass)</strong>. It dynamically filters objects matching the <em>"Interactible"</em> Layer Mask and overrides their rendering with the custom outline material.</p>
+                    <img src="Capture d'écran 2026-06-04 221747.png" alt="HDRP Custom Pass Configuration">
+                </div>
+                
+                <hr style="border: 0; border-top: 1px solid #333; margin: 40px 0;">
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">1. Procedural Panning Lines</h4>
+                        <p>The core pattern relies on generating custom angled lines. The shader takes the object space coordinates, splits them, and combines them into a 2D vector that is rotated using the <code>_LineAngle</code> property.</p>
+                        <p>By blending <code>Time</code> multiplied by <code>_PanSpeed</code>, the lines continuously slide across the surface. A <code>Fraction</code> node clamps the values to create a loop, while math operations handle the line density and spacing via <code>_LineWidth</code> and <code>_LineSpacing</code>.</p>
+                        <img src="ShaderGraph_Step1_Lines.png" style="width: 100%; border-radius: 6px; margin-top: 10px;" alt="Procedural Lines Generation">
+                    </div>
+                    <div class="tech-code">
+                        <img src="ShaderGraph_Blackboard_Properties.png" style="width: 100%; border-radius: 4px;" alt="Shader Blackboard Properties">
+                    </div>
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">2. Edge Softness & Clean Masking</h4>
+                        <p>To prevent the lines from looking pixelated or overly sharp, the pattern is passed through a <code>Smoothstep</code> node.</p>
+                        <p>The interpolation bounds are driven by calculations using <code>_LineWidth</code> and <code>_LineEdgeSoftness</code>. This ensures smooth anti-aliased transitions before the color is injected.</p>
+                        <img src="ShaderGraph_Step2_Smoothstep.png" style="width: 100%; border-radius: 6px; margin-top: 10px;" alt="Smoothstep Masking">
+                    </div>
+                    <div class="tech-row" style="margin: 0; padding: 0; background: none; border: none;">
+                        <p style="font-style: italic; color: #888; font-size: 0.9em;">Mathematical inputs map the line edges relative to the softness variable, granting precise art-direction control over the anime style.</p>
+                    </div>
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">3. Fresnel Rim Highlight & Final Compositing</h4>
+                        <p>A <code>Fresnel Effect</code> node is computed using the surface normal and view direction to isolate the outer silhouettes of the mesh.</p>
+                        <p>The procedural screen lines mask is inverted (<code>One Minus</code>) and blended with the <code>_FilterColor</code>, while the Fresnel receives its own <code>_FresnelColor</code>. Everything is combined in an <code>Add</code> node before outputting directly into the <strong>Emission</strong> channel of the final HDRP Fragment master node.</p>
+                        <img src="ShaderGraph_Step3_FresnelOutput.png" style="width: 100%; border-radius: 6px; margin-top: 10px;" alt="Fresnel and Master Node Output">
+                    </div>
+                </div>
+
             </div>
         </details>
-
     </main>
 
 </body>
