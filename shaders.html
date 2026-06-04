@@ -47,7 +47,6 @@
         /* Style des balises de code */
         pre { margin: 0; }
         code { font-family: 'Consolas', 'Courier New', Courier, monospace; color: #ff79c6; font-size: 0.9em; }
-        .c-comment { color: #8b949e; }
         .c-keyword { color: #ff7b72; }
         .c-var { color: #79c0ff; }
 
@@ -104,7 +103,7 @@
                         <img src="BlackAndWhitPostProcess.png" style="width: 100%; border-radius: 6px; margin-top: 10px;" alt="Aperçu N&B">
                     </div>
                     <div class="tech-code">
-<pre><code><span class="c-comment">// 1. Image de base & Conversion</span>
+<pre><code>
 <span class="c-keyword">float3</span> color = SAMPLE_TEXTURE2D_X(_InputTexture, sampler_InputTexture, uv).rgb;
 
 <span class="c-keyword">if</span>(_IsBlackAndWhite > <span class="c-var">0.5</span>) {
@@ -122,7 +121,7 @@
                         <img src="FlickeringPostProcess.gif" style="width: 100%; border-radius: 6px; margin-top: 10px;" alt="Aperçu Flicker">
                     </div>
                     <div class="tech-code">
-<pre><code><span class="c-comment">// 2. EFFET DE FLICKER</span>
+<pre><code>
 <span class="c-keyword">float</span> rawNoise = hash(<span class="c-keyword">float2</span>(floor(time * _FlickerSpeed), <span class="c-var">123.45</span>));
 
 <span class="c-keyword">float</span> flickerNoise = pow(rawNoise, _FlickerSharpness); 
@@ -140,14 +139,13 @@ color *= (<span class="c-var">1.0</span> - flicker);</code></pre>
                         <img src="RayuresPostProcess.gif" style="width: 100%; border-radius: 6px; margin-top: 10px;" alt="Aperçu Rayures">
                     </div>
                     <div class="tech-code">
-<pre><code><span class="c-comment">// 3. EXTRAIT DES RAYURES</span>
+<pre><code>
 <span class="c-keyword">float</span> scratchTime = floor(time * _ScratchSpeed);
 <span class="c-keyword">float</span> gridX = uv.x * (_ScratchResolution * <span class="c-var">5.0</span>); 
 <span class="c-keyword">float</span> cellX = floor(gridX);
 <span class="c-keyword">float</span> randCol = hash(<span class="c-keyword">float2</span>(cellX, scratchTime));
 
 <span class="c-keyword">if</span> (randCol > <span class="c-var">0.997</span>) { 
-    <span class="c-comment">// Calcul de la longueur et de l'épaisseur</span>
     <span class="c-keyword">float</span> xSub = frac(gridX) - <span class="c-var">0.5</span>;
     <span class="c-keyword">float</span> lineProfile = pow(saturate(<span class="c-var">1.0</span> - abs(xSub) * <span class="var">2.0</span>), thicknessPower);
     scratchLine = lineProfile * withinLine * _ScratchIntensity;
@@ -163,12 +161,11 @@ color *= (<span class="c-var">1.0</span> - flicker);</code></pre>
                         <img src="GrainPostProcessing.gif" style="width: 100%; border-radius: 6px; margin-top: 10px;" alt="Aperçu Grain">
                     </div>
                     <div class="tech-code">
-<pre><code><span class="c-comment">// 4. BOUCLE DU BRUIT CELLULAIRE</span>
+<pre><code>
 <span class="c-keyword">for</span>(<span class="c-keyword">int</span> y=-1; y&lt;=1; y++) {
     <span class="c-keyword">for</span>(<span class="c-keyword">int</span> x=-1; x&lt;=1; x++) {
         <span class="c-keyword">float2</span> neighbor = <span class="c-keyword">float2</span>(x, y);
         <span class="c-keyword">float2</span> cell = i_uv + neighbor;
-        <span class="c-comment">// Calcul des positions de grains aléatoires...</span>
         dots += pow(saturate(<span class="c-var">1.0</span> - dist * (<span class="c-var">1.0</span> / _GrainSize)), _GrainSharpness);
     }
 }</code></pre>
