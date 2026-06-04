@@ -12,10 +12,74 @@
         nav { margin-top: 20px; }
         nav a { display: inline-block; color: #ffffff; text-decoration: none; padding: 10px 20px; margin: 0 10px; border: 2px solid #00adb5; border-radius: 5px; font-weight: bold; transition: all 0.3s ease; }
         nav a:hover { background-color: #00adb5; color: #1a1a1a; }
-        main { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        main { max-width: 800px; margin: 40px auto; padding: 0 20px; text-align: left; } /* Aligné à gauche pour le contenu des shaders */
+
+        h3 { text-align: center; margin-bottom: 30px; }
+
+        /* --- STYLE DES ACCORDÉONS --- */
+        .shader-accordion {
+            margin-bottom: 15px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #222222;
+        }
+
+        /* La balise <summary> sert de bouton cliquable */
+        .shader-accordion summary {
+            padding: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #00adb5;
+            cursor: pointer;
+            list-style: none; /* Enlève la flèche moche par défaut */
+            position: relative;
+            transition: background 0.3s ease;
+        }
+
+        .shader-accordion summary:hover {
+            background-color: #2b2b2b;
+        }
+
+        /* Petite flèche stylisée à droite */
+        .shader-accordion summary::after {
+            content: '▼';
+            position: absolute;
+            right: 20px;
+            color: #00adb5;
+            transition: transform 0.3s ease;
+        }
+
+        /* Quand l'accordéon est ouvert, la flèche pivote */
+        .shader-accordion[open] summary::after {
+            transform: rotate(180deg);
+        }
+
+        /* Zone de contenu à l'intérieur */
+        .shader-content {
+            padding: 20px;
+            border-top: 1px solid #333;
+            background-color: #1c1c1c;
+            text-align: center; /* On recentre les images et textes internes */
+        }
+
+        .shader-content p {
+            text-align: left; /* Texte descriptif aligné à gauche pour la lecture */
+            color: #dddddd;
+            margin: 15px 0 5px 0;
+        }
+
+        .shader-content img {
+            max-width: 100%;
+            width: 700px;
+            border-radius: 6px;
+            margin: 10px 0 20px 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
     </style>
 </head>
 <body>
+
     <header>
         <h1>Gregoire Hennen</h1>
         <h2>Technical Artist</h2>
@@ -28,19 +92,43 @@
             <a href="lighting.html">Lighting</a>
         </nav>
     </header>
+
     <main>
         <h3>Voici mes Shaders</h3>
-        <h4>J'ai créé un postprocess en hsls qui rend comme un vieux filtre de cinéma</h4>
-        <img src="AllpostProcessB&W.gif" style="max-width: 100%; width: 700px; border-radius: 8px;">
-        <img src="AllPostProcessNoB&W.gif" style="max-width: 100%; width: 700px; border-radius: 8px;">
-        <p>Donc j'ai créé un effet de grain</p>
-        <img src="GrainPostProcessing.gif" style="max-width: 100%; width: 700px; border-radius: 8px;">
-        <p>J'ai aussi créé un effet de rayures</p>
-        <img src="RayuresPostProcess.gif" style="max-width: 100%; width: 700px; border-radius: 8px;">
-        <p>J'ai ajouter aussi un effet de flickering sur les source de lumiere</p>
-        <img src="FlickeringPostProcess.gif" style="max-width: 100%; width: 700px; border-radius: 8px;">
-        <p>Et avec tout ca j'ai cree un mode noir et blanc pour ceux qui veulent jouer en noir et blanc</p>
-        <img src="BlackAndWhitPostProcess.png" style="max-width: 100%; width: 700px; border-radius: 8px; margin: 10px 0;">
-    </main>
+
+        <details class="shader-accordion">
+            <summary>Post-Process : Filtre Vieux Cinéma (HLSL)</summary>
+            <div class="shader-content">
+                <p>J'ai créé un postprocess en HLSL qui simule le rendu d'une vieille pellicule de cinéma avec plusieurs options modulables.</p>
+                <img src="AllpostProcessB&W.gif" alt="Rendu global Noir et Blanc">
+                <img src="AllPostProcessNoB&W.gif" alt="Rendu global Couleur">
+                
+                <p><strong>Effet de Grain :</strong> Ajout d'un bruit procédural dynamique sur l'écran.</p>
+                <img src="GrainPostProcessing.gif" alt="Effet de grain">
+                
+                <p><strong>Effet de Rayures :</strong> Simulation de lignes verticales aléatoires pour imiter l'usure du film.</p>
+                <img src="RayuresPostProcess.gif" alt="Effet de rayures">
+                
+                <p><strong>Flickering :</strong> Variation de l'intensité de la lumière à haute fréquence.</p>
+                <img src="FlickeringPostProcess.gif" alt="Effet Flickering">
+                
+                <p><strong>Mode Noir & Blanc :</strong> Option pour désaturer complètement la scène tout en gardant le contraste.</p>
+                <img src="BlackAndWhitPostProcess.png" alt="Mode Noir et Blanc">
+            </div>
+        </details>
+
+        <details class="shader-accordion">
+            <summary>Shader : Outline / Dessin (Cel-Shading)</summary>
+            <div class="shader-content">
+                <p>Voici mon shader d'outline personnalisé. Il utilise les normales de la scène et la texture de profondeur (Depth Buffer) pour tracer des contours nets autour des objets.</p>
+                
+                <img src="OutlineRender.gif" alt="Rendu Outline final">
+                
+                <p>Idéal pour donner un effet cel-shading ou bande dessinée à tes productions.</p>
+            </div>
+        </details>
+
+        </main>
+
 </body>
 </html>
