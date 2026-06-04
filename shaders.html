@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -65,7 +65,7 @@
         <h1>Gregoire Hennen</h1>
         <h2>Technical Artist</h2>
         <nav>
-            <a href="index.html">Home</a>
+            <a href="index.html">Accueil</a>
             <a href="vfx.html">VFX</a>
             <a href="shaders.html">Shaders</a>
             <a href="tools.html">Tools</a>
@@ -104,11 +104,11 @@
                     </div>
                     <div class="tech-code">
 <pre><code>
-<span class="c-keyword">float3</span> color = SAMPLE_TEXTURE2D_X(_InputTexture, sampler_InputTexture, uv).rgb;
+float3 color = SAMPLE_TEXTURE2D_X(_InputTexture, sampler_InputTexture, uv).rgb;
 
-<span class="c-keyword">if</span>(_IsBlackAndWhite > <span class="c-var">0.5</span>) {
-    <span class="c-keyword">float</span> lum = dot(color, <span class="c-keyword">float3</span>(<span class="c-var">0.299</span>, <span class="c-var">0.587</span>, <span class="c-var">0.114</span>));
-    color = <span class="c-keyword">float3</span>(lum, lum, lum);
+if(_IsBlackAndWhite > 0.5) {
+    float lum = dot(color, float3(0.299, 0.587, 0.114));
+    color = float3(lum, lum, lum);
 }</code></pre>
                     </div>
                 </div>
@@ -122,12 +122,12 @@
                     </div>
                     <div class="tech-code">
 <pre><code>
-<span class="c-keyword">float</span> rawNoise = hash(<span class="c-keyword">float2</span>(floor(time * _FlickerSpeed), <span class="c-var">123.45</span>));
+float rawNoise = hash(float2(floor(time * _FlickerSpeed), 123.45));
 
-<span class="c-keyword">float</span> flickerNoise = pow(rawNoise, _FlickerSharpness); 
-<span class="c-keyword">float</span> flicker = flickerNoise * _FlickerIntensity;
+float flickerNoise = pow(rawNoise, _FlickerSharpness); 
+float flicker = flickerNoise * _FlickerIntensity;
 
-color *= (<span class="c-var">1.0</span> - flicker);</code></pre>
+color *= (1.0 - flicker);</code></pre>
                     </div>
                 </div>
 
@@ -140,14 +140,14 @@ color *= (<span class="c-var">1.0</span> - flicker);</code></pre>
                     </div>
                     <div class="tech-code">
 <pre><code>
-<span class="c-keyword">float</span> scratchTime = floor(time * _ScratchSpeed);
-<span class="c-keyword">float</span> gridX = uv.x * (_ScratchResolution * <span class="c-var">5.0</span>); 
-<span class="c-keyword">float</span> cellX = floor(gridX);
-<span class="c-keyword">float</span> randCol = hash(<span class="c-keyword">float2</span>(cellX, scratchTime));
+float scratchTime = floor(time * _ScratchSpeed);
+float gridX = uv.x * (_ScratchResolution * 5.0); 
+float cellX = floor(gridX);
+float randCol = hash(float2(cellX, scratchTime));
 
-<span class="c-keyword">if</span> (randCol > <span class="c-var">0.997</span>) { 
-    <span class="c-keyword">float</span> xSub = frac(gridX) - <span class="c-var">0.5</span>;
-    <span class="c-keyword">float</span> lineProfile = pow(saturate(<span class="c-var">1.0</span> - abs(xSub) * <span class="var">2.0</span>), thicknessPower);
+if (randCol > 0.997) { 
+    float xSub = frac(gridX) - 0.5;
+    float lineProfile = pow(saturate(1.0 - abs(xSub) * 2.0), thicknessPower);
     scratchLine = lineProfile * withinLine * _ScratchIntensity;
 }</code></pre>
                     </div>
@@ -162,11 +162,11 @@ color *= (<span class="c-var">1.0</span> - flicker);</code></pre>
                     </div>
                     <div class="tech-code">
 <pre><code>
-<span class="c-keyword">for</span>(<span class="c-keyword">int</span> y=-1; y&lt;=1; y++) {
-    <span class="c-keyword">for</span>(<span class="c-keyword">int</span> x=-1; x&lt;=1; x++) {
-        <span class="c-keyword">float2</span> neighbor = <span class="c-keyword">float2</span>(x, y);
-        <span class="c-keyword">float2</span> cell = i_uv + neighbor;
-        dots += pow(saturate(<span class="c-var">1.0</span> - dist * (<span class="c-var">1.0</span> / _GrainSize)), _GrainSharpness);
+for(int y=-1; y<=1; y++) {
+    for(int x=-1; x<=1; x++) {
+        float2 neighbor = float2(x, y);
+        float2 cell = i_uv + neighbor;
+        dots += pow(saturate(1.0 - dist * (1.0 / _GrainSize)), _GrainSharpness);
     }
 }</code></pre>
                     </div>
@@ -175,7 +175,7 @@ color *= (<span class="c-var">1.0</span> - flicker);</code></pre>
             </div>
         </details>
 
-       <details class="shader-accordion">
+        <details class="shader-accordion">
             <summary>Shader: Procedural Outline & Hatching (Shader Graph / HDRP)</summary>
             <div class="shader-content">
                 
@@ -230,7 +230,5 @@ color *= (<span class="c-var">1.0</span> - flicker);</code></pre>
         </details>
     </main>
 
-</body>
-</html>
 </body>
 </html>
