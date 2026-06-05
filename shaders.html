@@ -289,9 +289,9 @@ for(int y=-1; y<=1; y++) {
 
                         <h4 style="color: #00adb5; margin-top:0;">1. Procedural Panning Lines</h4>
 
-                        <p>The core pattern relies on generating custom angled lines. The shader takes the object space coordinates, splits them, and combines them into a 2D vector that is rotated using the <code>_LineAngle</code> property.</p>
+                        <p>The core pattern relies on generating custom angled lines. The shader takes the object space coordinates, splits them, and combines them into a 2D vector that is rotated using the <code class="language-cpp">_LineAngle</code> property.</p>
 
-                        <p>By blending <code>Time</code> multiplied by <code>_PanSpeed</code>, the lines continuously slide across the surface. A <code>Fraction</code> node clamps the values to create a loop, while math operations handle the line density and spacing via <code>_LineWidth</code> and <code>_LineSpacing</code>.</p>
+                        <p>By blending <code class="language-cpp">Time</code> multiplied by <code class="language-cpp">_PanSpeed</code>, the lines continuously slide across the surface. A <code class="language-cpp">Fraction</code> node clamps the values to create a loop, while math operations handle the line density and spacing via <code class="language-cpp">_LineWidth</code> and <code class="language-cpp">_LineSpacing</code>.</p>
 
                         <img src="ShaderGraph_Step1_Lines.png" style="width: 100%; border-radius: 6px; margin-top: 10px;" alt="Procedural Lines Generation">
 
@@ -313,9 +313,9 @@ for(int y=-1; y<=1; y++) {
 
                         <h4 style="color: #00adb5; margin-top:0;">2. Edge Softness & Clean Masking</h4>
 
-                        <p>To prevent the lines from looking pixelated or overly sharp, the pattern is passed through a <code>Smoothstep</code> node.</p>
+                        <p>To prevent the lines from looking pixelated or overly sharp, the pattern is passed through a <code class="language-cpp">Smoothstep</code> node.</p>
 
-                        <p>The interpolation bounds are driven by calculations using <code>_LineWidth</code> and <code>_LineEdgeSoftness</code>. This ensures smooth anti-aliased transitions before the color is injected.</p>
+                        <p>The interpolation bounds are driven by calculations using <code class="language-cpp">_LineWidth</code> and <code class="language-cpp">_LineEdgeSoftness</code>. This ensures smooth anti-aliased transitions before the color is injected.</p>
 
                         <p style="font-style: italic; color: #888; font-size: 0.95em; margin-top: 15px;">Mathematical inputs map the line edges relative to the softness variable, granting precise art-direction control over the anime style.</p>
 
@@ -337,9 +337,9 @@ for(int y=-1; y<=1; y++) {
 
                         <h4 style="color: #00adb5; margin-top:0;">3. Fresnel Rim Highlight & Final Compositing</h4>
 
-                        <p>A <code>Fresnel Effect</code> node is computed using the surface normal and view direction to isolate the outer silhouettes of the mesh.</p>
+                        <p>A <code class="language-cpp">Fresnel Effect</code> node is computed using the surface normal and view direction to isolate the outer silhouettes of the mesh.</p>
 
-                        <p>The procedural screen lines mask is inverted (<code>One Minus</code>) and blended with the <code>_FilterColor</code>, while the Fresnel receives its own <code>_FresnelColor</code>. Everything is combined in an <code>Add</code> node before outputting directly into the <strong>Emission</strong> channel of the final HDRP Fragment master node.</p>
+                        <p>The procedural screen lines mask is inverted (<code class="language-cpp">One Minus</code>) and blended with the <code class="language-cpp">_FilterColor</code>, while the Fresnel receives its own <code class="language-cpp">_FresnelColor</code>. Everything is combined in an <code class="language-cpp">Add</code> node before outputting directly into the <strong>Emission</strong> channel of the final HDRP Fragment master node.</p>
 
                         <img src="ShaderGraph_Step3_FresnelOutput.png" style="width: 100%; border-radius: 6px; margin-top: 10px;" alt="Fresnel and Master Node Output">
 
@@ -423,7 +423,7 @@ for(int y=-1; y<=1; y++) {
 
                         <h4 style="color: #00adb5; margin-top:0;">Pass 1: Overriding World Geometry</h4>
 
-                        <p>The initial pass handles pulling the object through the environment. It clears the existing depth buffer context (<code>Clear Flags: Depth</code>) and runs a depth comparison test set to <strong>"Always"</strong>.</p>
+                        <p>The initial pass handles pulling the object through the environment. It clears the existing depth buffer context (<code class="language-cpp">Clear Flags: Depth</code>) and runs a depth comparison test set to <strong>"Always"</strong>.</p>
 
                         <p>While this successfully draws the flashlight through solid walls, it unfortunately flattens and destroys the relative depth values required for the flashlight's own overlapping pieces.</p>
 
@@ -433,7 +433,7 @@ for(int y=-1; y<=1; y++) {
 
                         <h4 style="color: #00adb5; margin-top:0;">Pass 2: Re-enforcing Self-Sorting Order</h4>
 
-                        <p>The subsequent pass steps in to mend the inner artifacting. Operating with <code>Clear Flags: None</code> to retain the newly established foreground layer, it switches the depth comparison back to <strong>"Less Equal"</strong>.</p>
+                        <p>The subsequent pass steps in to mend the inner artifacting. Operating with <code class="language-cpp">Clear Flags: None</code> to retain the newly established foreground layer, it switches the depth comparison back to <strong>"Less Equal"</strong>.</p>
 
                         <p>This allows all local sub-elements to evaluate against each other normally, establishing proper self-occlusion.</p>
 
