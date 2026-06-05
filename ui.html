@@ -115,6 +115,9 @@ private IEnumerator MovePanelRoutine(RectTransform panel, Vector2 startPos, Vect
                         <p>
                             This prevents unwanted player movement while navigating menus and keeps the virtual cursor synchronized with the real cursor state.
                         </p>
+                        <div class="ui-note ui-note-warning">
+                            <strong>Known limitation:</strong> the virtual cursor was functional enough for menu navigation, but it was not fully polished before the final build. It currently appears in the bottom-left area of the screen when enabled, and its movement is not clamped by a strict screen boundary. Because of that, the player can technically move it too far and lose track of it. I kept this issue as a minor bug because other gameplay and production problems had a higher priority near the end of the project.
+                        </div>
                         
                     </div>
                     <div class="tech-code">
@@ -312,9 +315,94 @@ private void RegisterUIEvents()
                     </div>
                 </div>
 
+                <div class="center-img-container">
+                    <img src="ui-graphics-settings.png" alt="Graphics settings panel with resolution, fullscreen, gamma, black and white and VSync options">
+                    <p class="media-caption">Suggested screenshot: the Graphics settings panel showing Resolution, Fullscreen, Quality, VSync, Gamma and Black & White options.</p>
+                </div>
+
                 <div class="tech-row">
                     <div class="tech-desc">
-                        <h4 style="color: #00adb5; margin-top:0;">3. Global Restore Button</h4>
+                        <h4 style="color: #00adb5; margin-top:0;">3. Graphics Settings: Resolution, Gamma & Post-Process Toggles</h4>
+                        <p>
+                            The graphics menu exposes several player-facing options: resolution selection, fullscreen/windowed behavior, quality level, VSync, gamma correction and a black & white post-process toggle linked to my custom old-TV/vintage post-process effect.
+                        </p>
+                        <p>
+                            The gamma slider writes directly into the HDRP <code>LiftGammaGain</code> override, while the black & white toggle updates the custom post-process volume component and saves the value in <code>PlayerPrefs</code>. This makes the settings persistent and immediately visible in-game.
+                        </p>
+                        <div class="ui-note ui-note-warning">
+                            <strong>Production issue:</strong> the resolution system was one of the hardest parts of this UI to make reliable. When switching to a resolution lower than my monitor's native resolution, fullscreen mode could produce a darker and more washed-out image. To keep the build visually consistent, I had to force a windowed behavior in some cases instead of relying on a perfect fullscreen switch. The system works, but I would not call it fully ideal yet.
+                        </div>
+                    </div>
+                    <div class="tech-code">
+<pre><code class="language-cpp">
+public void ChangeGamma(float sliderValue)
+{
+    if (_liftGammaGainEffect == null) return;
+
+    Vector4 currentGammaVector = _liftGammaGainEffect.gamma.value;
+    currentGammaVector.w = sliderValue;
+    _liftGammaGainEffect.gamma.value = currentGammaVector;
+
+    PlayerPrefs.SetFloat(GammaKey, sliderValue);
+    PlayerPrefs.Save();
+}
+
+public void ChangeBlackAndWhite(bool isOn)
+{
+    if (_oldTVPostEffect == null) return;
+
+    _oldTVPostEffect.blackAndWhite.value = isOn;
+    PlayerPrefs.SetInt(BlackAndWhiteKey, isOn ? 1 : 0);
+    PlayerPrefs.Save();
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">4. Resolution Handling & Fullscreen Fallback</h4>
+                        <p>
+                            The resolution dropdown is built from the available monitor resolutions, then filtered to avoid duplicate entries. The selected resolution index is stored and reapplied on startup, while the fullscreen toggle is synchronized with the chosen resolution.
+                        </p>
+                        <p>
+                            I also added safeguards around event registration to avoid the dropdown and toggle calling each other repeatedly while the UI is being initialized or reset.
+                        </p>
+                    </div>
+                    <div class="tech-code">
+<pre><code class="language-cpp">
+public void ChangeResolution()
+{
+    if (_resDropDown == null || _selectedResolutionList.Count == 0) return;
+
+    _selectedResolution = _resDropDown.value;
+    Resolution targetRes = _selectedResolutionList[_selectedResolution];
+
+    if (targetRes.width == _maxPCResolution.width &&
+        targetRes.height == _maxPCResolution.height)
+    {
+        _isFullScreen = true;
+    }
+    else
+    {
+        _isFullScreen = false;
+    }
+
+    ApplyWindowChanges(_selectedResolution, _isFullScreen);
+
+    PlayerPrefs.SetInt(ResKey, _selectedResolution);
+    PlayerPrefs.SetInt(FullScreenKey, _isFullScreen ? 1 : 0);
+    PlayerPrefs.Save();
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="ui-note ui-note-info">
+                    <strong>Honest project note:</strong> I did not have enough time to fully correct the resolution and virtual cursor edge cases before submission. They were considered minor bugs compared to other issues that had a stronger impact on gameplay, level flow and final polish. I still kept them documented here because they show the real production constraints behind the system, not only the clean final result.
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">5. Global Restore Button</h4>
                         <p>
                             The reset system stays readable because the main manager does not manually modify every slider and toggle. It simply delegates to the three specialized managers.
                         </p>
