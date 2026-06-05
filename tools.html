@@ -298,59 +298,54 @@ Vector3 positionArriveeReelle = pB.position - (directionNormalisee * longueurCoi
             <summary>Spot Light Volumetric Mesh & Collider Generator (Unity Editor / C#)</summary>
             <div class="tool-content">
                 
-                <p style="font-size: 1.1em; color: #aaa; text-align: center;">A dual-purpose editor tool designed to automatically generate mathematical conical meshes synchronized with Unity Spot Lights, serving as gameplay trigger volumes.</p>
+                <p style="font-size: 1.1em; color: #aaa; text-align: center;">An advanced editor utility designed to automatically generate mathematical conical meshes and synchronized convex trigger volumes based on native Unity Spot Lights.</p>
 
                 <div class="center-img-container">
-                    <img src="spotlight-mesh-preview.png" alt="Spot Light Volumetric Mesh Preview">
-                    <p style="color: #888; font-size: 0.9em; margin-top: 5px;">Conical geometric mesh generated automatically matching the Spot Light's precise emission cone</p>
+                    <img src="spotlight-mesh-generator.gif" alt="Volumetric Light Mesh Real-time Demonstration">
+                    <p style="color: #888; font-size: 0.9em; margin-top: 5px;">Real-time execution inside the Scene View showing dynamic color switching, segment density adjustments, and auto-updating convex wireframes.</p>
                 </div>
 
-                <h4 style="color: #00adb5; border-bottom: 1px solid #333; padding-bottom: 5px;">Objective & Technical Pivot</h4>
-                <p>Initially designed as a visual solution to render lightweight volumetric light beams with alpha vertex gradients, the tool underwent a strategic pivot following the project's migration to the High Definition Render Pipeline (HDRP). Since HDRP natively supports advanced volumetric fog, the system was refactored into a gameplay utility.</p>
-                <p>Its primary responsibility became the real-time generation of accurate <strong>Mesh Colliders configured as Triggers</strong>. This allowed the design team to implement reliable, light-based detection mechanics, such as triggering monster behaviors when entering a flashlight or structural searchlight beam.</p>
+                <h4 style="color: #00adb5; border-bottom: 1px solid #333; padding-bottom: 5px;">Objective & Technical Workflow</h4>
+                <p>This tool addresses a dual requirement within our prototype pipeline: creating a lightweight visual representation of volumetric light beams and simultaneously producing precise physical collision data.</p>
+                <p>While modern pipelines like HDRP offer native volumetric fog, this tool generates a localized procedural mesh that feeds into a <strong>Mesh Collider configured as a Trigger</strong>. This allows the system to run performance-friendly gameplay detection scripts—such as triggering advanced monster AI reactions when the player sweeps them with a flashlight or structural searchlight.</p>
                 
                 <ul class="bullet-list">
-                    <li><span class="highlight">ExecuteInEditMode:</span> Operates directly inside the Unity Editor scene view, enabling instant visual feedback without entering Play Mode.</li>
-                    <li><span class="highlight">Component Synchronization:</span> Automatically fetches and couples data between the native <code>Light</code> component, a <code>MeshFilter</code>, and a <code>MeshCollider</code>.</li>
+                    <li><span class="highlight">ExecuteInEditMode:</span> Provides instantaneous feedback directly inside the Unity Scene View upon changing light components, stripping away any need to boot the game.</li>
+                    <li><span class="highlight">Shader Graph Bridge:</span> Dynamically safe-checks high-range Lux values from HDRP lights using an intensity divider to maintain flawless material transparency blending.</li>
                 </ul>
 
-                <h4 style="color: #00adb5; border-bottom: 1px solid #333; padding-bottom: 5px; margin-top: 30px;">Configurable Properties</h4>
-                <p>The component tracks the light's properties natively and exposes structural control parameters within the Inspector:</p>
+                <h4 style="color: #00adb5; border-bottom: 1px solid #333; padding-bottom: 5px; margin-top: 30px;">Configurable Script Fields</h4>
+                <p>The script extends standard component data through clean, designer-friendly inspector handles:</p>
 
                 <table>
                     <thead>
                         <tr>
-                            <th>Parameter</th>
-                            <th>Description</th>
+                            <th>Field Property</th>
+                            <th>Internal Technical Behavior</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="highlight">Segments</td>
-                            <td>The geometric resolution (subdivisions) of the base circle. Higher values smooth the cone; lower values optimize calculation.</td>
-                        </tr>
-                        <tr>
                             <td class="highlight">Maximum Opacity</td>
-                            <td>Configures the alpha gradient peak at the source vertex, fading out to 0 at the far radius limit.</td>
+                            <td>Clamped via a <code>[Range(0f, 1f)]</code> attribute. Controls vertex color alpha at the cone's origin tip before scaling.</td>
                         </tr>
                         <tr>
-                            <td class="highlight">Spot Angle & Range</td>
-                            <td>Natively read from the paired Light component to recalculate the volume dimensions on the fly.</td>
+                            <td class="highlight">Segments</td>
+                            <td>Dictates the mathematical resolution of the cone. Lowering this value optimizes runtime physics topology on the fly.</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight">Intensity Divider</td>
+                            <td>Acts as a safety factor against high-intensity Lux values to protect visual alpha thresholds inside the target material.</td>
                         </tr>
                     </tbody>
                 </table>
-
-                <div class="center-img-container">
-                    <img src="tool-ui-spotlight.png" alt="Volumetric Light Inspector UI">
-                    <p style="color: #888; font-size: 0.9em; margin-top: 5px;">Inspector component layout with automatic safety check for Light Type validation</p>
-                </div>
 
                 <hr style="border: 0; border-top: 1px solid #333; margin: 40px 0;">
 
                 <div class="tech-row">
                     <div class="tech-desc">
-                        <h4 style="color: #00adb5; margin-top:0;">1. Trigonometric Radius Calculation</h4>
-                        <p>The math engine maps the light's aperture properties into 3D space. It calculates the absolute radius of the cone's base cap by applying a tangent function over half of the spotlight angle, scaled by its maximum range.</p>
+                        <h4 style="color: #00adb5; margin-top:0;">1. Mathematical Bounds Mapping</h4>
+                        <p>The math module reads the native spotlight aperture metrics. By converting half of the <code>spotAngle</code> to radians and applying a tangent operation multiplied by the light's <code>range</code>, it yields the exact spatial radius for the cone base cap.</p>
                     </div>
                     <div class="tech-code">
 <pre><code><span class="c-keyword">float</span> farRadius = Mathf.Tan(_light.spotAngle * <span class="c-var">0.5f</span> * Mathf.Deg2Rad) * _light.range;
@@ -361,14 +356,14 @@ Color[] colors = <span class="c-keyword">new</span> Color[_segments + 2];</code>
 
                 <div class="tech-row">
                     <div class="tech-desc">
-                        <h4 style="color: #00adb5; margin-top:0;">2. Procedural Vertex & Color Generation</h4>
-                        <p>Vertex 0 sits perfectly at the local origin. The system then evaluates trigonometric step coordinates around a circular loop at the light's range depth. Vertices fade linearly from the configured source opacity to absolute transparency at the base.</p>
+                        <h4 style="color: #00adb5; margin-top:0;">2. Procedural Color & Alpha Gradients</h4>
+                        <p>Vertex 0 anchors at the local origin with a soft alpha. The engine then sweeps an iterative loop using Sine and Cosine coordinates to stitch outer boundary vertices, forcing their vertex alpha to 0 to generate a smooth volumetric dissipation.</p>
                     </div>
                     <div class="tech-code">
 <pre><code>vertices[0] = Vector3.zero;
-colors[0] = <span class="c-keyword">new</span> Color(r, g, b, _maximumOpacity);
+colors[0] = <span class="c-keyword">new</span> Color(r, g, b, _maximumOpacity / <span class="c-var">10f</span>);
 
-<span class="c-keyword">float</span> angle = i * (<span class="c-var">2f</span> * Mathf.PI / _segments);
+<span class="c-keyword">float</span> angle = i * (<span class="c-var">2 * Mathf.PI</span> / _segments);
 vertices[i + 1] = <span class="c-keyword">new</span> Vector3(Mathf.Sin(angle) * farRadius, Mathf.Cos(angle) * farRadius, _light.range);
 colors[i + 1] = <span class="c-keyword">new</span> Color(r, g, b, <span class="c-var">0f</span>);</code></pre>
                     </div>
@@ -376,8 +371,8 @@ colors[i + 1] = <span class="c-keyword">new</span> Color(r, g, b, <span class="c
 
                 <div class="tech-row">
                     <div class="tech-desc">
-                        <h4 style="color: #00adb5; margin-top:0;">3. Structural Convex Assembly</h4>
-                        <p>Indices are mapped to bind the origin vertex with every pair of adjacent outer edge vertices. The newly baked mesh is instantly piped into the <code>MeshCollider</code>, forcing its state to convex and enabling clean trigger matrices.</p>
+                        <h4 style="color: #00adb5; margin-top:0;">3. Structural Trigger Binding</h4>
+                        <p>Indices are systematically ordered to build side faces out of triangular strips. Once baked, the structural data updates the <code>MeshFilter</code> and updates the shared mesh data on the <code>MeshCollider</code>, forcing convex constraints for trigger operations.</p>
                     </div>
                     <div class="tech-code">
 <pre><code>triangles[j * 3] = 0;
@@ -390,16 +385,11 @@ _collider.sharedMesh = _mesh;</code></pre>
                     </div>
                 </div>
 
-                <div class="center-img-container">
-                    <img src="spotlight-mesh-demo.gif" alt="Dynamic Real-time Reconstruction Demo">
-                    <p style="color: #888; font-size: 0.9em; margin-top: 5px;">Real-time mesh and trigger collider generation reacting instantly to inspector light property handles</p>
-                </div>
-
                 <hr style="border: 0; border-top: 1px solid #333; margin: 40px 0;">
 
-                <h4 style="color: #00adb5; margin-top:30px;">Technical Analysis & Future Outlooks</h4>
-                <p>The tool successfully fulfilled the prototype's core requirement: establishing an automated bridge between visual lighting aesthetics and physical collision logic, stripping away manual alignment workloads for designers.</p>
-                <p style="font-style: italic; color: #aaa;">Project Note: Since the system recalculates the vertex index arrays during its Update pass, running multiple dynamic instances simultaneously can impact CPU performance. Future production iterations would include an optimized change-detection dirty flag to only rebuild the topology structure when the light properties are dirty, alongside implementing occlusion checks to deform the mesh against environmental obstacles.</p>
+                <h4 style="color: #00adb5; margin-top:30px;">Technical Assessment & Optimizations</h4>
+                <p>The implementation completely fulfills prototyping needs by bridging lighting components directly into physics simulation spaces. This completely eradicates manual collider layout processes for design teams.</p>
+                <p style="font-style: italic; color: #aaa;">Project Architecture Note: Because geometry rebuilding triggers during the Update sequence inside the editor, scale optimizations would incorporate a property dirty-flag check pattern. This ensures structural vertex arrays only rebuild when parameters change, rather than casting every single frame.</p>
 
             </div>
         </details>
