@@ -111,6 +111,119 @@ public void ReloadBattery() {
         <div style="text-align: center;">
             <img src="Flashlight_Reloading.gif" style="max-width: 600px; border-radius: 6px;" alt="Reloading Preview">
         </div>
+<details class="shader-accordion">
+    <summary>Light On/Off & Bad Bulb Flicker System</summary>
+    <div class="shader-content">
+
+        <p>
+            This script controls whether lights are on or off, while also adding a bad bulb flicker effect.
+            It affects both real Unity lights and emissive materials, so the visual result stays consistent.
+        </p>
+
+        <div class="center-img-container">
+            <img src="LightOnOff_Inspector.png" alt="Light On Off Inspector Settings">
+            <p class="media-caption">Inspector setup showing lights, emissive renderers, flicker values and blackout settings.</p>
+        </div>
+
+        <div class="tech-row">
+            <div class="tech-desc">
+                <h4 style="color: #00adb5;">1. Light State Management</h4>
+                <p>
+                    The script stores the original intensity of each light at startup. 
+                    When the light is turned off, all intensities are set to 0. 
+                    When turned back on, the script restores the light behavior and allows flickering again.
+                </p>
+            </div>
+            <div class="tech-code">
+<pre><code class="language-cpp">
+    public void TurnOn() {
+    _isOn = true;
+    _nextFlickerTime = 0f;
+}
+
+public void TurnOff() {
+    _isOn = false;
+    ApplyIntensity(0f);
+}
+
+public void ToggleLight() {
+    if (_isOn) TurnOff();
+    else TurnOn();
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="center-img-container">
+            <img src="LightOnOff_Toggle.gif" alt="Light Toggle Preview">
+            <p class="media-caption">Shows the light switching on and off in game.</p>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #333; margin: 30px 0;">
+
+        <div class="tech-row">
+            <div class="tech-desc">
+                <h4 style="color: #00adb5;">2. Bad Bulb Flicker</h4>
+                <p>
+                    The flicker is randomized using delay ranges, intensity multipliers, blackouts and strong flickers.
+                    This creates an unstable light effect, useful for horror or abandoned environments.
+                </p>
+            </div>
+            <div class="tech-code">
+<pre><code class="language-cpp">
+    private void ChooseNextFlicker() {
+    _nextFlickerTime = Time.time + Random.Range(flickerDelayRange.x, flickerDelayRange.y);
+
+    if (Random.value < blackoutChance) {
+        _blackoutEndTime = Time.time + Random.Range(blackoutDurationRange.x, blackoutDurationRange.y);
+        _targetMultiplier = 0f;
+        return;
+    }
+
+    if (Random.value < strongFlickerChance) {
+        _targetMultiplier = strongFlickerMultiplier;
+        return;
+    }
+
+    _targetMultiplier = Random.Range(minIntensityMultiplier, maxIntensityMultiplier);
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="center-img-container">
+            <img src="LightOnOff_BadBulbFlicker.gif" alt="Bad Bulb Flicker Preview">
+            <p class="media-caption">Shows random intensity changes, short blackouts and stronger flickers.</p>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #333; margin: 30px 0;">
+
+        <div class="tech-row">
+            <div class="tech-desc">
+                <h4 style="color: #00adb5;">3. Emissive Material Synchronization</h4>
+                <p>
+                    The script also updates emissive materials with MaterialPropertyBlock.
+                    This avoids modifying the shared material directly and keeps the mesh glow synchronized with the light intensity.
+                </p>
+            </div>
+            <div class="tech-code">
+<pre><code class="language-cpp">
+    Color targetColor = _baseEmissiveColors[i] * multiplier;
+
+_currentEmissiveColors[i] = Color.Lerp(
+    _currentEmissiveColors[i],
+    targetColor,
+    lerpFactor
+);
+
+emissiveRenderers[i].GetPropertyBlock(_propBlock);
+_propBlock.SetColor(_emissivePropID, _currentEmissiveColors[i]);
+emissiveRenderers[i].SetPropertyBlock(_propBlock);</code></pre>
+            </div>
+        </div>
+
+        <div class="center-img-container">
+            <img src="LightOnOff_EmissiveSync.gif" alt="Emissive Synchronization Preview">
+            <p class="media-caption">Shows the emissive mesh fading and flickering together with the real light.</p>
+        </div>
 
     </div>
 </details>
