@@ -74,11 +74,23 @@ th { background-color: #00adb5; color: #1a1a1a; font-weight: bold; }
             border: 1px solid #30363d;
         }
         
-        /* Code Tags Style */
-        pre { margin: 0; }
-        code { font-family: 'Consolas', 'Courier New', Courier, monospace; color: #ff79c6; font-size: 0.9em; }
-        .c-keyword { color: #ff7b72; }
-        .c-var { color: #79c0ff; }
+        /* --- Code Tags Style --- */
+pre { 
+    margin: 0; 
+    padding: 0; 
+    background: none; /* Enlève le fond par défaut */
+}
+
+code { 
+    font-family: 'Consolas', 'Courier New', Courier, monospace; 
+    color: #c9d1d9; /* Une couleur grise/blanche bien plus lisible */
+    font-size: 0.9em; 
+    background: none;
+}
+
+/* Si tu veux quand même colorer certains mots manuellement dans ton HTML */
+.c-keyword { color: #ff7b72; } /* Rouge pour les keywords */
+.c-var { color: #79c0ff; }     /* Bleu pour les variables */
 
 
 .center-img-container { text-align: center; margin: 25px 0; }
