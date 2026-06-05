@@ -39,10 +39,10 @@
             <div class="tech-desc">
                 <h4 style="color: #00adb5;">1. Système de Clignotement Dynamique</h4>
                 <p>Pour éviter une interface trop chargée, l'état de la batterie est communiqué via un comportement instable de la lumière. Le script utilise un tableau de <code class="language-csharp">FlickerSettings</code> configurable via l'inspecteur, permettant de définir des comportements distincts par paliers de batterie.</p>
-                <img src="image_9ac97d.png" style="width: 100%; border-radius: 6px; margin: 10px 0;" alt="Inspecteur Flicker Configuration">
+                <img src="FlickerinSettings.png" style="width: 100%; border-radius: 6px; margin: 10px 0;" alt="Inspecteur Flicker Configuration">
             </div>
             <div class="tech-code">
-<pre><code class="language-csharp">
+<pre><code class="language-cpp">
 private void CheckForRandomFlicker() {
     foreach (var config in _flickerConfigs) {
         if (currentBattery > config.minBatteryThreshold && currentBattery <= config.maxBatteryThreshold) {
@@ -77,10 +77,10 @@ private IEnumerator FlickerRoutine(FlickerSettings settings) {
         <div class="tech-row">
             <div class="tech-desc">
                 <h4 style="color: #00adb5;">2. Mécanique de Recharge (ReloadBattery)</h4>
-                <p>La méthode <code class="language-csharp">ReloadBattery()</code> utilise une logique d'états pour gérer la progression. Elle vérifie si le joueur vient d'initier la charge (déclenchement des sons) et ajuste dynamiquement l'intensité lumineuse et les propriétés du joueur (comme le <em>FlashBang</em>) une fois certains seuils atteints.</p>
+                <p>La méthode <code class="language-cpp">ReloadBattery()</code> utilise une logique d'états pour gérer la progression. Elle vérifie si le joueur vient d'initier la charge et ajuste dynamiquement l'intensité lumineuse et permet de ractiver le <em>FlashBang</em> une fois un certains seuils atteints.</p>
             </div>
             <div class="tech-code">
-<pre><code class="language-csharp">
+<pre><code class="language-cpp">
 public void ReloadBattery() {
     if (!_isReloading && currentBattery < _maxBattery) {
         _isReloading = true;
