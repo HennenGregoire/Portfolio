@@ -27,10 +27,68 @@
         <details class="shader-accordion">
             <summary>Post-Process: Vintage Cinema Filter (HLSL / HDRP)</summary>
             <div class="shader-content">
+                <p style="text-align: center; font-size: 1.1em; color: #aaa;">I developed a custom Post-Process shader in Unity HDRP to recreate the aesthetic of degraded vintage cinema film.</p>
+                <div class="global-gifs">
+                    <img src="AllpostProcessB&W.gif" alt="Black and White Render">
+                    <img src="AllPostProcessNoB&W.gif" alt="Color Render">
                 </div>
+                <div class="settings-img-container">
+                    <p style="color: #00adb5; font-weight: bold; margin-bottom: 10px;">User interface and editable parameters of the effect in Unity:</p>
+                    <img src="ImagePostProcessOldTV.png" alt="Old TV Post Process Parameters">
+                </div>
+                <hr style="border: 0; border-top: 1px solid #333; margin: 40px 0;">
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">1. Black & White Conversion</h4>
+                        <p>The shader first calculates the scene luminance using a dot product with standard visual perception coefficients.</p>
+                        <img src="BlackAndWhitPostProcess.png" style="width: 100%; border-radius: 6px; margin-top: 10px;" alt="B&W Preview">
+                    </div>
+                    <div class="tech-code">
+                        <pre><code>float3 color = SAMPLE_TEXTURE2D_X(_InputTexture, sampler_InputTexture, uv).rgb;
+if(_IsBlackAndWhite > 0.5) {
+    float lum = dot(color, float3(0.299, 0.587, 0.114));
+    color = float3(lum, lum, lum);
+}</code></pre>
+                    </div>
+                </div>
+            </div>
         </details>
 
-        </main>
+        <details class="shader-accordion">
+            <summary>Shader: Procedural Outline & Hatching (Shader Graph / HDRP)</summary>
+            <div class="shader-content">
+                <p style="text-align: center; font-size: 1.1em; color: #aaa;">Procedural outline and anime-style hatching effect built with Unity Shader Graph.</p>
+                <div class="global-gifs">
+                    <img src="OutlineShowcase.gif" style="width: 100%;" alt="Outline Effect Showcase">
+                </div>
+                <div class="settings-img-container">
+                    <p style="color: #00adb5; font-weight: bold; margin-bottom: 10px;">HDRP Custom Pass Rendering Architecture:</p>
+                    <img src="Capture d'écran 2026-06-04 221747.png" alt="HDRP Custom Pass Configuration">
+                </div>
+            </div>
+        </details>
+
+        <details class="shader-accordion">
+            <summary>Rendering: X-Ray Flashlight Layering (HDRP Custom Pass)</summary>
+            <div class="shader-content">
+                <p style="text-align: center; font-size: 1.1em; color: #aaa;">X-Ray sorting for flashlight visibility.</p>
+                <div class="triple-gifs">
+                    <div class="gif-card">
+                        <img src="Flashlight_NoCustomPass.gif" alt="No Custom Pass">
+                        <p><span>1. No Custom Pass:</span> Hidden by geometry.</p>
+                    </div>
+                    <div class="gif-card">
+                        <img src="Flashlight_Pass1Only.gif" alt="Pass 1 Only">
+                        <p><span>2. First Pass Only:</span> Sorting issues.</p>
+                    </div>
+                    <div class="gif-card">
+                        <img src="Flashlight_BothPasses.gif" alt="Both Passes Active">
+                        <p><span>3. Both Passes Active:</span> Perfect sorting.</p>
+                    </div>
+                </div>
+            </div>
+        </details>
+    </main>
 
     <script>
         const navLinks = document.querySelectorAll('nav a');
