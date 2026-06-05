@@ -5,11 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VFX - Gregoire Hennen</title>
     <style>
-        /* Style pour le bouton actif */
-nav a.active {
-    background-color: #00adb5;
-    color: #1a1a1a;
-    border-color: #00adb5;
+       nav a.active::before {
+    content: "> ";
+    color: #00adb5;
+    font-weight: bold;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
 }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
