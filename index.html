@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accueil - Gregoire Hennen</title>
+    <title>Home - Gregoire Hennen</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,9 +11,9 @@
     <header>
         <h1>Gregoire Hennen</h1>
         <h2>Technical Artist</h2>
-        
+
         <nav>
-            <a href="index.html">Accueil</a>
+            <a href="index.html">Home</a>
             <a href="vfx.html">VFX</a>
             <a href="shaders.html">Shaders</a>
             <a href="tools.html">Tools</a>
@@ -27,11 +27,13 @@
         <section class="home-hero">
             <div class="home-hero-glow"></div>
             <div class="home-hero-content">
-                <p class="home-kicker">Projet de jam - 3 semaines</p>
-                <h3>Portfolio Technical Art</h3>
+                <p class="home-kicker">3-Week Game Jam Project</p>
+                <h3>Technical Art Portfolio</h3>
+
                 <p class="home-intro">
-                    Pendant ce projet, j'ai travaillé sur plusieurs aspects techniques et artistiques du jeu : VFX, shaders, post-processing, lighting, intégration UI, scripting, optimisation et intégration d'assets. Mon rôle était de renforcer la lisibilité du gameplay tout en améliorant l'ambiance visuelle et la cohérence globale du projet.
+                    During this project, I worked on several technical and artistic aspects of the game, including VFX, shaders, post-processing, lighting, UI integration, scripting, optimization, and asset integration. My role was to improve gameplay readability while enhancing the visual atmosphere and overall consistency of the project.
                 </p>
+
                 <div class="home-tags">
                     <span>Unity</span>
                     <span>VFX Graph</span>
@@ -43,25 +45,27 @@
         </section>
 
         <section class="home-overview">
+
             <div class="home-section-title">
-                <h4>Ce que j'ai réalisé sur le projet</h4>
-                <p>Un résumé clair des principales responsabilités que j'ai prises pendant la production.</p>
+                <h4>What I Contributed to the Project</h4>
+                <p>A quick overview of the main responsibilities I handled during production.</p>
             </div>
 
             <div class="home-card-grid">
+
                 <article class="home-card featured-card">
                     <div class="home-card-icon">⚡</div>
-                    <h5>VFX gameplay</h5>
+                    <h5>Gameplay VFX</h5>
                     <p>
-                        Création de plusieurs effets visuels pour renforcer les feedbacks du joueur : effet électrique sur les disjoncteurs, fumée quand le monstre est flashé, et effets liés à la machine chargée à 100%.
+                        Created several gameplay-oriented visual effects to improve player feedback, including an electrical effect for circuit breakers, a smoke effect triggered when the monster is flashed, and celebration effects linked to the machine reaching 100% charge.
                     </p>
                 </article>
 
                 <article class="home-card">
                     <div class="home-card-icon">◈</div>
-                    <h5>Shaders/Post-processing</h5>
+                    <h5>Rendering & Shaders</h5>
                     <p>
-                        Mise en place de shaders et de post-processing: une outline pour les element interactible, un filtre de vielle télé pour renforcer l imerssion dans un cinema en 1930, des custom pass pour l outline et pour la lampe torche.
+                        Developed an outline shader to highlight interactable objects and improve gameplay readability. I also created a vintage television post-process effect inspired by 1930s cinema to reinforce immersion, as well as HDRP Custom Passes used for both the outline system and the flashlight rendering setup.
                     </p>
                 </article>
 
@@ -69,85 +73,94 @@
                     <div class="home-card-icon">⌘</div>
                     <h5>Scripting</h5>
                     <p>
-                        Creation de quelque script pour intégrer certain de mes effet et creation du script flashlight battery et lightOnOff.
+                        Developed several support scripts to integrate my systems into the game, including the Flashlight Battery system and the Light On/Off controller. I also assisted the programmer with the implementation of additional gameplay features.
                     </p>
                 </article>
 
                 <article class="home-card">
                     <div class="home-card-icon">☰</div>
-                    <h5>Intégration UI</h5>
+                    <h5>UI Integration</h5>
                     <p>
-                        Intégration de l'interface utilisateur, gestion des menus et leur transition, paramètres, mappage des touche, switch manette souris, systeme de quetes.
+                        Integrated the user interface, including menu management, animated transitions, settings menus, input mapping displays, automatic keyboard/gamepad switching, and the quest system.
                     </p>
                 </article>
 
                 <article class="home-card">
                     <div class="home-card-icon">◆</div>
-                    <h5>Intégration d'assets</h5>
+                    <h5>Asset Integration</h5>
                     <p>
-                        Intégration générale de certains assets dans le projet, adaptation dans la scène, réglages visuels et cohérence avec l'ambiance globale du jeu.
+                        Integrated various assets into the project, adapted them to the game environment, adjusted their visual settings, and ensured they matched the overall artistic direction and atmosphere.
                     </p>
                 </article>
 
                 <article class="home-card">
                     <div class="home-card-icon">☠</div>
-                    <h5>Animations du monstre</h5>
+                    <h5>Monster Animation Integration</h5>
                     <p>
-                        Intégration des differentes animations du monstre et mise en place dans l aniamtor et dans le code.
+                        Integrated the monster's animation sets into Unity, configured the Animator state machine, and connected animations with gameplay and AI behaviors through code.
                     </p>
                 </article>
 
                 <article class="home-card">
                     <div class="home-card-icon">▱</div>
-                    <h5>Optimisation</h5>
+                    <h5>Optimization</h5>
                     <p>
-                        Optimisation de la scène avec la création de LOD sur les meshes et la mise en place du culling sur la map pour améliorer les performances.
+                        Optimized the scene by creating LOD setups for meshes and implementing culling systems across the level to improve overall performance.
                     </p>
                 </article>
 
                 <article class="home-card featured-card">
                     <div class="home-card-icon">✦</div>
-                    <h5>Lighting & ambiance</h5>
+                    <h5>Lighting & Atmosphere</h5>
                     <p>
-                        Mise en place complète des lights et de l'ambiance du jeu. L'objectif était d avoir une ambiance horreur donc sombre mais sans pour autant ne pas si retrouver dans la map.
+                        Responsible for the complete lighting setup and visual atmosphere of the game. The goal was to create a dark horror environment while ensuring players could still navigate the map comfortably and maintain good gameplay readability.
                     </p>
                 </article>
+
             </div>
         </section>
 
         <section class="home-pipeline">
+
             <div class="home-section-title">
-                <h4>Mon approche Technical Artist</h4>
-                <p>Relier l'intention artistique, les contraintes techniques et le besoin de feedback gameplay.</p>
+                <h4>My Technical Artist Approach</h4>
+                <p>Connecting artistic intent, technical constraints, and gameplay feedback.</p>
             </div>
 
             <div class="home-flow">
+
                 <div class="home-flow-step">
                     <span>01</span>
                     <strong>Gameplay</strong>
-                    <p>Identifier ce que le joueur doit comprendre immédiatement.</p>
+                    <p>Identify what the player needs to understand immediately.</p>
                 </div>
+
                 <div class="home-flow-line"></div>
+
                 <div class="home-flow-step">
                     <span>02</span>
-                    <strong>Visuel</strong>
-                    <p>Créer un effet, une lumière ou une interface qui rend l'action lisible.</p>
+                    <strong>Visual Design</strong>
+                    <p>Create a visual effect, lighting setup, or UI element that makes the action clear and readable.</p>
                 </div>
+
                 <div class="home-flow-line"></div>
+
                 <div class="home-flow-step">
                     <span>03</span>
-                    <strong>Technique</strong>
-                    <p>Intégrer proprement dans Unity avec des réglages simples à modifier.</p>
+                    <strong>Technical Implementation</strong>
+                    <p>Integrate everything cleanly into Unity with flexible systems that are easy to iterate on and maintain.</p>
                 </div>
+
             </div>
         </section>
 
         <section class="home-summary-panel">
-            <h4>Résumé du rôle</h4>
+            <h4>Role Summary</h4>
             <p>
-                Sur ce projet, je me suis occupé d'une grande partie de l'habillage technique du jeu : effets visuels, shaders, post-processing, UI, lighting, ambiance, intégration d'assets, intégration d'animations, scripting de support et optimisation. Cette page sert de point d'entrée vers les différentes sections du portfolio, où chaque système est détaillé plus précisément.
+                Throughout this project, I was responsible for a large part of the game's technical presentation: visual effects, shaders, post-processing, UI systems, lighting, atmosphere, asset integration, animation integration, support scripting, and optimization. This page serves as an entry point to the different sections of the portfolio, where each system is explained in greater technical detail.
             </p>
         </section>
+
     </main>
 
 <script>
@@ -160,5 +173,6 @@
         }
     });
 </script>
+
 </body>
 </html>
