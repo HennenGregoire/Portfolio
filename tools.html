@@ -6,6 +6,10 @@
     <title>Shaders - Gregoire Hennen</title>
     
     <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
 </head>
     
 <body>
@@ -84,7 +88,7 @@
                         <p>The script instantiates an empty <code>Texture3D</code> container using the user-defined size. It uses the <strong>RGBA32</strong> color format. To ensure seamless looping and clean lookups, the filtering is set to Bilinear and the WrapMode is forced to Repeat.</p>
                     </div>
                     <div class="tech-code">
-<pre><code><span class="c-keyword">Texture3D</span> texture = <span class="c-keyword">new</span> Texture3D(size, size, size, TextureFormat.RGBA32, <span class="c-var">false</span>);
+<pre><code class="language-cpp"><span class="c-keyword">Texture3D</span> texture = <span class="c-keyword">new</span> Texture3D(size, size, size, TextureFormat.RGBA32, <span class="c-var">false</span>);
 texture.wrapMode = TextureWrapMode.Repeat;
 texture.filterMode = FilterMode.Bilinear;</code></pre>
                     </div>
@@ -96,7 +100,7 @@ texture.filterMode = FilterMode.Bilinear;</code></pre>
                         <p>Using three nested loops (X, Y, Z), the script calculates the normalized local position of every single voxel. Since <code>snoise()</code> outputs values in a -1 to 1 range, a standard mathematical remapping is applied to bring it into a [0, 1] range fit for color grayscale maps.</p>
                     </div>
                     <div class="tech-code">
-<pre><code><span class="c-keyword">float3</span> pos = <span class="c-keyword">new</span> float3(x, y, z) / (<span class="c-keyword">float</span>)size * frequency;
+<pre><code class="language-cpp"><span class="c-keyword">float3</span> pos = <span class="c-keyword">new</span> float3(x, y, z) / (<span class="c-keyword">float</span>)size * frequency;
 <span class="c-keyword">float</span> noiseValue = (noise.snoise(pos) + <span class="c-var">1f</span>) * <span class="c-var">0.5f</span>;
 
 colors[index] = <span class="c-keyword">new</span> Color(noiseValue, noiseValue, noiseValue, <span class="var">1f</span>);</code></pre>
@@ -110,7 +114,7 @@ colors[index] = <span class="c-keyword">new</span> Color(noiseValue, noiseValue,
                         <p>For optimal user convenience, the script sets the editor's active selection directly to the newly created asset so it pops up instantly in the Inspector window.</p>
                     </div>
                     <div class="tech-code">
-<pre><code>texture.SetPixels(colors);
+<pre><code class="language-cpp">texture.SetPixels(colors);
 texture.Apply();
 
 <span class="c-keyword">AssetDatabase</span>.CreateAsset(texture, path);
@@ -197,7 +201,7 @@ texture.Apply();
                         <p>The algorithm wipes existing references before starting structural calculations. It instantiates a structured GameObject parent framework and caches spatial data in a <code>HashSet&lt;Vector3Int&gt;</code> to prevent overlapping assets during multi-room construction.</p>
                     </div>
                     <div class="tech-code">
-<pre><code><span class="c-keyword">public void</span> GenererMap()
+<pre><code class="language-cpp"><span class="c-keyword">public void</span> GenererMap()
 {
     NettoyerMap();
     dallesInstanciees.Clear();
@@ -214,7 +218,7 @@ texture.Apply();
                         <p>The system loops over adjacent scene node data, extracting direction normals and offsetting standard module widths to prevent mesh z-fighting. It automatically isolates distance parameters before invoking line generation methods.</p>
                     </div>
                     <div class="tech-code">
-<pre><code>Vector3 direction = pB.position - pA.position;
+<pre><code class="language-cpp">Vector3 direction = pB.position - pA.position;
 Vector3 directionNormalisee = direction.normalized;
 
 Vector3 positionDepartReelle = pA.position + (directionNormalisee * longueurCoin);
@@ -229,7 +233,7 @@ Vector3 positionArriveeReelle = pB.position - (directionNormalisee * longueurCoi
                         <p>To avoid script lockups or memory overflows during iterative layout expansion, an internal loop monitor serves as a hard safety cutoff. It checks bounding collision sets and kills wave progression once max limits are reached.</p>
                     </div>
                     <div class="tech-code">
-<pre><code><span class="c-keyword">bool</span> auMoinsUneVagueActive = <span class="c-var">true</span>;
+<pre><code class="language-cpp"><span class="c-keyword">bool</span> auMoinsUneVagueActive = <span class="c-var">true</span>;
 <span class="c-keyword">int</span> etape = 1;
 
 <span class="c-keyword">while</span> (auMoinsUneVagueActive && etape <= seuilSecuriteMax)
@@ -308,7 +312,7 @@ Vector3 positionArriveeReelle = pB.position - (directionNormalisee * longueurCoi
                         <p>The math module reads the native spotlight aperture metrics. By converting half of the <code>spotAngle</code> to radians and applying a tangent operation multiplied by the light's <code>range</code>, it yields the exact spatial radius for the cone base cap.</p>
                     </div>
                     <div class="tech-code">
-<pre><code><span class="c-keyword">float</span> farRadius = Mathf.Tan(_light.spotAngle * <span class="c-var">0.5f</span> * Mathf.Deg2Rad) * _light.range;
+<pre><code class="language-cpp"><span class="c-keyword">float</span> farRadius = Mathf.Tan(_light.spotAngle * <span class="c-var">0.5f</span> * Mathf.Deg2Rad) * _light.range;
 Vector3[] vertices = <span class="c-keyword">new</span> Vector3[_segments + 2];
 Color[] colors = <span class="c-keyword">new</span> Color[_segments + 2];</code></pre>
                     </div>
@@ -320,7 +324,7 @@ Color[] colors = <span class="c-keyword">new</span> Color[_segments + 2];</code>
                         <p>Vertex 0 anchors at the local origin with a soft alpha. The engine then sweeps an iterative loop using Sine and Cosine coordinates to stitch outer boundary vertices, forcing their vertex alpha to 0 to generate a smooth volumetric dissipation.</p>
                     </div>
                     <div class="tech-code">
-<pre><code>vertices[0] = Vector3.zero;
+<pre><code class="language-cpp">vertices[0] = Vector3.zero;
 colors[0] = <span class="c-keyword">new</span> Color(r, g, b, _maximumOpacity / <span class="c-var">10f</span>);
 
 <span class="c-keyword">float</span> angle = i * (<span class="c-var">2 * Mathf.PI</span> / _segments);
@@ -335,7 +339,7 @@ colors[i + 1] = <span class="c-keyword">new</span> Color(r, g, b, <span class="c
                         <p>Indices are systematically ordered to build side faces out of triangular strips. Once baked, the structural data updates the <code>MeshFilter</code> and updates the shared mesh data on the <code>MeshCollider</code>, forcing convex constraints for trigger operations.</p>
                     </div>
                     <div class="tech-code">
-<pre><code>triangles[j * 3] = 0;
+<pre><code class="language-cpp">triangles[j * 3] = 0;
 triangles[j * 3 + 1] = j + 1;
 triangles[j * 3 + 2] = (j + 2 > _segments) ? 1 : j + 2;
 
