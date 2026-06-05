@@ -294,6 +294,116 @@ Vector3 positionArriveeReelle = pB.position - (directionNormalisee * longueurCoi
             </div>
         </details>
 
+        <details class="tool-accordion">
+            <summary>Spot Light Volumetric Mesh & Collider Generator (Unity Editor / C#)</summary>
+            <div class="tool-content">
+                
+                <p style="font-size: 1.1em; color: #aaa; text-align: center;">A dual-purpose editor tool designed to automatically generate mathematical conical meshes synchronized with Unity Spot Lights, serving as gameplay trigger volumes.</p>
+
+                <div class="center-img-container">
+                    <img src="spotlight-mesh-preview.png" alt="Spot Light Volumetric Mesh Preview">
+                    <p style="color: #888; font-size: 0.9em; margin-top: 5px;">Conical geometric mesh generated automatically matching the Spot Light's precise emission cone</p>
+                </div>
+
+                <h4 style="color: #00adb5; border-bottom: 1px solid #333; padding-bottom: 5px;">Objective & Technical Pivot</h4>
+                <p>Initially designed as a visual solution to render lightweight volumetric light beams with alpha vertex gradients, the tool underwent a strategic pivot following the project's migration to the High Definition Render Pipeline (HDRP). Since HDRP natively supports advanced volumetric fog, the system was refactored into a gameplay utility.</p>
+                <p>Its primary responsibility became the real-time generation of accurate <strong>Mesh Colliders configured as Triggers</strong>. This allowed the design team to implement reliable, light-based detection mechanics, such as triggering monster behaviors when entering a flashlight or structural searchlight beam.</p>
+                
+                <ul class="bullet-list">
+                    <li><span class="highlight">ExecuteInEditMode:</span> Operates directly inside the Unity Editor scene view, enabling instant visual feedback without entering Play Mode.</li>
+                    <li><span class="highlight">Component Synchronization:</span> Automatically fetches and couples data between the native <code>Light</code> component, a <code>MeshFilter</code>, and a <code>MeshCollider</code>.</li>
+                </ul>
+
+                <h4 style="color: #00adb5; border-bottom: 1px solid #333; padding-bottom: 5px; margin-top: 30px;">Configurable Properties</h4>
+                <p>The component tracks the light's properties natively and exposes structural control parameters within the Inspector:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="highlight">Segments</td>
+                            <td>The geometric resolution (subdivisions) of the base circle. Higher values smooth the cone; lower values optimize calculation.</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight">Maximum Opacity</td>
+                            <td>Configures the alpha gradient peak at the source vertex, fading out to 0 at the far radius limit.</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight">Spot Angle & Range</td>
+                            <td>Natively read from the paired Light component to recalculate the volume dimensions on the fly.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="center-img-container">
+                    <img src="tool-ui-spotlight.png" alt="Volumetric Light Inspector UI">
+                    <p style="color: #888; font-size: 0.9em; margin-top: 5px;">Inspector component layout with automatic safety check for Light Type validation</p>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid #333; margin: 40px 0;">
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">1. Trigonometric Radius Calculation</h4>
+                        <p>The math engine maps the light's aperture properties into 3D space. It calculates the absolute radius of the cone's base cap by applying a tangent function over half of the spotlight angle, scaled by its maximum range.</p>
+                    </div>
+                    <div class="tech-code">
+<pre><code><span class="c-keyword">float</span> farRadius = Mathf.Tan(_light.spotAngle * <span class="c-var">0.5f</span> * Mathf.Deg2Rad) * _light.range;
+Vector3[] vertices = <span class="c-keyword">new</span> Vector3[_segments + 2];
+Color[] colors = <span class="c-keyword">new</span> Color[_segments + 2];</code></pre>
+                    </div>
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">2. Procedural Vertex & Color Generation</h4>
+                        <p>Vertex 0 sits perfectly at the local origin. The system then evaluates trigonometric step coordinates around a circular loop at the light's range depth. Vertices fade linearly from the configured source opacity to absolute transparency at the base.</p>
+                    </div>
+                    <div class="tech-code">
+<pre><code>vertices[0] = Vector3.zero;
+colors[0] = <span class="c-keyword">new</span> Color(r, g, b, _maximumOpacity);
+
+<span class="c-keyword">float</span> angle = i * (<span class="c-var">2f</span> * Mathf.PI / _segments);
+vertices[i + 1] = <span class="c-keyword">new</span> Vector3(Mathf.Sin(angle) * farRadius, Mathf.Cos(angle) * farRadius, _light.range);
+colors[i + 1] = <span class="c-keyword">new</span> Color(r, g, b, <span class="c-var">0f</span>);</code></pre>
+                    </div>
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">3. Structural Convex Assembly</h4>
+                        <p>Indices are mapped to bind the origin vertex with every pair of adjacent outer edge vertices. The newly baked mesh is instantly piped into the <code>MeshCollider</code>, forcing its state to convex and enabling clean trigger matrices.</p>
+                    </div>
+                    <div class="tech-code">
+<pre><code>triangles[j * 3] = 0;
+triangles[j * 3 + 1] = j + 1;
+triangles[j * 3 + 2] = (j + 2 > _segments) ? 1 : j + 2;
+
+_collider.convex = <span class="c-var">true</span>;
+_collider.isTrigger = <span class="c-var">true</span>;
+_collider.sharedMesh = _mesh;</code></pre>
+                    </div>
+                </div>
+
+                <div class="center-img-container">
+                    <img src="spotlight-mesh-demo.gif" alt="Dynamic Real-time Reconstruction Demo">
+                    <p style="color: #888; font-size: 0.9em; margin-top: 5px;">Real-time mesh and trigger collider generation reacting instantly to inspector light property handles</p>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid #333; margin: 40px 0;">
+
+                <h4 style="color: #00adb5; margin-top:30px;">Technical Analysis & Future Outlooks</h4>
+                <p>The tool successfully fulfilled the prototype's core requirement: establishing an automated bridge between visual lighting aesthetics and physical collision logic, stripping away manual alignment workloads for designers.</p>
+                <p style="font-style: italic; color: #aaa;">Project Note: Since the system recalculates the vertex index arrays during its Update pass, running multiple dynamic instances simultaneously can impact CPU performance. Future production iterations would include an optimized change-detection dirty flag to only rebuild the topology structure when the light properties are dirty, alongside implementing occlusion checks to deform the mesh against environmental obstacles.</p>
+
+            </div>
+        </details>
+
     </main>
 
 </body>
