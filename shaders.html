@@ -103,7 +103,7 @@
 
                     <div class="tech-code">
 
-<pre><code class="language-hlsl">
+<pre><code class="language-cpp">
 
 float3 color = SAMPLE_TEXTURE2D_X(_InputTexture, sampler_InputTexture, uv).rgb;
 
@@ -139,7 +139,7 @@ if(_IsBlackAndWhite > 0.5) {
 
                     <div class="tech-code">
 
-<pre><code class="language-hlsl">
+<pre><code class="language-cpp">
 float rawNoise = hash(float2(floor(time * _FlickerSpeed), 123.45));
 
 
@@ -174,7 +174,7 @@ color *= (1.0 - flicker);</code></pre>
 
                     <div class="tech-code">
 
-<pre><code class="language-hlsl">
+<pre><code class="language-cpp">
 
 float scratchTime = floor(time * _ScratchSpeed);
 
@@ -218,7 +218,7 @@ if (randCol > 0.997) {
 
                     <div class="tech-code">
 
-<<pre><code class="language-hlsl">
+<pre><code class="language-cpp">
 
 for(int y=-1; y<=1; y++) {
 
