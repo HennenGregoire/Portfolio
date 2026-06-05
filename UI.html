@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI - Gregoire Hennen</title>
+    
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</head>
+
+<body>
+
+    <header>
+        <h1>Gregoire Hennen</h1>
+        <h2>Technical Artist</h2>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="vfx.html">VFX</a>
+            <a href="shaders.html">Shaders</a>
+            <a href="tools.html">Tools</a>
+            <a href="scripts.html">Scripts</a>
+            <a href="ui.html">UI</a>
+            <a href="lighting.html">Lighting</a>
+        </nav>
+    </header>
+
+    <main>
+        <h3>UI Systems & Menu Architecture</h3>
+        <p class="page-intro">
+            This section presents the complete UI framework I developed in Unity: animated menu panels, pause-state logic, quest display behavior, persistent audio and graphics settings, input-device detection, and gamepad icon data mapping.
+        </p>
+
+        <section class="ui-hero">
+            <div class="ui-hero-text">
+                <h4>Why a dedicated UI category?</h4>
+                <p>
+                    The UI scripts are not isolated helper scripts: they form a complete player-facing system. The menu manager controls the global state flow, while specialized settings managers handle audio, graphics, input sensitivity, control display, and persistent preferences.
+                </p>
+                <p>
+                    I separated this work from the general gameplay scripts because the UI layer has its own architecture, iteration constraints, UX feedback, animation timing, and save/load responsibilities.
+                </p>
+            </div>
+            <div class="ui-hero-media">
+                <img src="ui-overview-menu.gif" alt="Complete UI menu overview">
+                <p>Suggested media: full navigation demo through Menu, Settings, Pause and Quest panels.</p>
+            </div>
+        </section>
+
+        <details class="ui-accordion" open>
+            <summary>Main Menu Manager: Global UI State Machine</summary>
+            <div class="ui-content">
+
+                <p class="section-lead">
+                    The <strong>MainMenuManager</strong> acts as the central orchestrator for the whole interface. It manages panel visibility, player control locking, cursor state, pause transitions, quest display timing, UI sound feedback, and scene loading.
+                </p>
+
+                <div class="center-img-container">
+                    <img src="ui-main-menu-inspector.png" alt="MainMenuManager Inspector setup">
+                    <p class="media-caption">Inspector setup showing panel references, RectTransforms, animation timings, quest texts, input actions and audio clips.</p>
+                </div>
+
+                <h4 class="ui-subtitle">Core Responsibilities</h4>
+                <div class="ui-feature-grid">
+                    <div class="ui-feature-card">
+                        <h5>Panel Routing</h5>
+                        <p>Controls the Main Menu, Settings, Pause, Quest and Credits panels from one central point, avoiding scattered button logic across the scene.</p>
+                    </div>
+                    <div class="ui-feature-card">
+                        <h5>Gameplay Locking</h5>
+                        <p>When menus open, player scripts are disabled and the cursor is released. When the player returns to gameplay, controls are restored and the cursor is locked again.</p>
+                    </div>
+                    <div class="ui-feature-card">
+                        <h5>Unscaled UI Timing</h5>
+                        <p>Panel movement and quest timers use realtime/unscaled time, so UI animation remains stable even when the game is paused with <code>Time.timeScale = 0</code>.</p>
+                    </div>
+                    <div class="ui-feature-card">
+                        <h5>Audio Feedback</h5>
+                        <p>Dedicated methods trigger click, hover, slider and input-swap sounds, keeping button events clean and readable in the Inspector.</p>
+                    </div>
+                </div>
+
+                <hr class="ui-separator">
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">1. Reusable Panel Animation Coroutine</h4>
+                        <p>
+                            Instead of creating one animation method per panel, the manager uses a shared coroutine receiving a target <code>RectTransform</code>, start position, end position, duration and delay.
+                        </p>
+                        <p>
+                            The motion is smoothed through <code>Mathf.SmoothStep</code>, which gives the UI a cleaner arrival than a raw linear interpolation.
+                        </p>
+                    </div>
+                    <div class="tech-code">
+<pre><code class="language-csharp">private IEnumerator MovePanelRoutine(RectTransform panel, Vector2 startPos, Vector2 endPos, float duration, float delay)
+{
+    if (panel == null) yield break;
+
+    panel.anchoredPosition = startPos;
+    yield return new WaitForSecondsRealtime(delay);
+
+    float elapsedTime = 0f;
+
+    while (elapsedTime &lt; duration)
+    {
+        elapsedTime += Time.unscaledDeltaTime;
+        float t = Mathf.Clamp01(elapsedTime / duration);
+        t = Mathf.SmoothStep(0f, 1f, t);
+
+        panel.anchoredPosition = Vector2.Lerp(startPos, endPos, t);
+        yield return null;
+    }
+
+    panel.anchoredPosition = endPos;
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">2. Cursor + Player Control State</h4>
+                        <p>
+                            The UI manager switches the project between two clear interaction modes: <strong>menu mode</strong> with visible cursor and disabled gameplay scripts, and <strong>play mode</strong> with locked cursor and active player controls.
+                        </p>
+                        <p>
+                            This prevents unwanted player movement while navigating menus and keeps the virtual cursor synchronized with the real cursor state.
+                        </p>
+                        <img src="ui-cursor-state.gif" style="width: 100%; border-radius: 6px; margin-top: 10px;" alt="Cursor state switching demo">
+                    </div>
+                    <div class="tech-code">
+<pre><code class="language-csharp">public void SetCursorsState(bool isVisible)
+{
+    Cursor.lockState = isVisible ? CursorLockMode.None : CursorLockMode.Locked;
+    Cursor.visible = isVisible;
+
+    if (_virtualCursor != null)
+    {
+        _virtualCursor.SetActive(isVisible);
+    }
+}
+
+public void TogglePlayerControls(bool state)
+{
+    foreach (MonoBehaviour script in _playerScripts)
+    {
+        if (script != null)
+        {
+            if (script is PlayerInput) continue;
+            script.enabled = state;
+        }
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">3. Quest Panel: Temporary HUD vs Pause Visibility</h4>
+                        <p>
+                            The quest panel has two behaviors depending on the game state. During gameplay, it appears for a short amount of time and automatically hides. During pause, it is forced to stay visible so the player can read the objective without fighting a timer.
+                        </p>
+                        <p>
+                            This is a small UX detail, but it makes the system feel intentional rather than purely mechanical.
+                        </p>
+                    </div>
+                    <div class="tech-code">
+<pre><code class="language-csharp">private IEnumerator QuestTimerRoutine()
+{
+    if (!_isQuestOpen)
+    {
+        _questPanel.SetActive(true);
+        _isQuestOpen = true;
+        yield return StartCoroutine(MovePanelRoutine(
+            _questPanelRect,
+            _startPositionQuestPanel,
+            _endPositionQuestPanel,
+            _animationDurationQuestPanel,
+            _startDelayQuestPanel));
+    }
+
+    yield return new WaitForSecondsRealtime(5f);
+
+    if (_isQuestOpen)
+    {
+        _isQuestOpen = false;
+        yield return StartCoroutine(MovePanelRoutine(
+            _questPanelRect,
+            _endPositionQuestPanel,
+            _startPositionQuestPanel,
+            _animationDurationQuestPanel * 2f,
+            0f));
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="center-img-container">
+                    <img src="ui-quest-panel-demo.gif" alt="Quest panel appearance and auto hide demo">
+                    <p class="media-caption">Suggested GIF: quest panel appearing after Play/Continue, staying visible in pause, then hiding again in gameplay.</p>
+                </div>
+
+            </div>
+        </details>
+
+        <details class="ui-accordion">
+            <summary>Settings Hub: Audio, Graphics, Inputs & Reset Logic</summary>
+            <div class="ui-content">
+
+                <p class="section-lead">
+                    The Settings UI is split into specialized managers. This keeps each domain readable: audio handles mixer values, graphics handles resolution and post-processing, input handles sensitivity and control display, while the main menu exposes a global restore button.
+                </p>
+
+                <div class="global-gifs">
+                    <img src="ui-settings-tabs.gif" alt="Settings panels animation">
+                    <img src="ui-restore-settings.gif" alt="Restore settings demo">
+                </div>
+
+                <h4 class="ui-subtitle">Settings Architecture</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Manager</th>
+                            <th>Handled Features</th>
+                            <th>Persistence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="highlight">AudioSettingsManager</td>
+                            <td>Master, music, ambience, SFX, player, enemy and UI volume sliders.</td>
+                            <td>Saved through PlayerPrefs using one key per mixer group.</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight">GraphicsSettingsManager</td>
+                            <td>Resolution, fullscreen, quality, VSync, gamma, black & white post-process toggle.</td>
+                            <td>Saved through PlayerPrefs and reapplied on startup.</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight">InputSettingsManager</td>
+                            <td>Mouse/gamepad sensitivity, keyboard/gamepad panel switching, device detection.</td>
+                            <td>Sensitivity saved in PlayerPrefs and pushed to the player controller.</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight">MainMenuManager</td>
+                            <td>Calls all reset functions from a single Restore All Settings button.</td>
+                            <td>Centralized reset bridge.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr class="ui-separator">
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">1. Audio Mixer Conversion</h4>
+                        <p>
+                            The audio sliders use normalized values from 0 to 1, but the Unity Audio Mixer expects decibels. The script converts slider values through <code>Mathf.Log10(value) * 20</code> and clamps silence to <code>-80 dB</code>.
+                        </p>
+                        <p>
+                            Each category also updates a percentage text, giving immediate visual feedback to the player.
+                        </p>
+                        <img src="ui-audio-settings.png" style="width: 100%; border-radius: 6px; margin-top: 10px;" alt="Audio settings UI">
+                    </div>
+                    <div class="tech-code">
+<pre><code class="language-csharp">private void SetMixerVolume(string parameterName, float normalizedValue)
+{
+    if (audioMixer == null) return;
+
+    normalizedValue = Mathf.Clamp01(normalizedValue);
+
+    float volumeDb;
+
+    if (normalizedValue &lt;= 0.0001f)
+    {
+        volumeDb = MinVolumeDb;
+    }
+    else
+    {
+        volumeDb = Mathf.Log10(normalizedValue) * 20f;
+        volumeDb = Mathf.Clamp(volumeDb, MinVolumeDb, MaxVolumeDb);
+    }
+
+    audioMixer.SetFloat(parameterName, volumeDb);
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">2. Graphics Persistence & Safe UI Events</h4>
+                        <p>
+                            The graphics manager loads saved preferences at startup and applies them to Unity systems such as <code>Screen.SetResolution</code>, <code>QualitySettings</code>, VSync and HDRP volume overrides.
+                        </p>
+                        <p>
+                            To avoid recursive dropdown/toggle callbacks while loading or resetting data, UI events are temporarily unregistered before values are written back.
+                        </p>
+                    </div>
+                    <div class="tech-code">
+<pre><code class="language-csharp">private void RegisterUIEvents()
+{
+    UnregisterUIEvents();
+
+    if (_vSyncToggle != null)
+        _vSyncToggle.onValueChanged.AddListener(ChangeVSync);
+
+    if (_qualityDropDown != null)
+        _qualityDropDown.onValueChanged.AddListener(delegate { ChangeQuality(); });
+
+    if (_blackAndWhiteToggle != null)
+        _blackAndWhiteToggle.onValueChanged.AddListener(ChangeBlackAndWhite);
+
+    if (_resDropDown != null)
+        _resDropDown.onValueChanged.AddListener(delegate { ChangeResolution(); });
+
+    if (_fullScreenToggle != null)
+        _fullScreenToggle.onValueChanged.AddListener(delegate { ChangeFullScreen(); });
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">3. Global Restore Button</h4>
+                        <p>
+                            The reset system stays readable because the main manager does not manually modify every slider and toggle. It simply delegates to the three specialized managers.
+                        </p>
+                        <p>
+                            This keeps responsibilities clean and makes it easy to extend later with accessibility, language, HUD scale or key rebinding settings.
+                        </p>
+                    </div>
+                    <div class="tech-code">
+<pre><code class="language-csharp">public void RestoreAllSettings()
+{
+    if (_graphicsManager != null)
+        _graphicsManager.ResetGraphicsSettings();
+
+    if (_audioManager != null)
+        _audioManager.ResetAudioSettings();
+
+    if (_inputManager != null)
+        _inputManager.ResetInputSettings();
+
+    Debug.Log("Tous les paramètres ont été réinitialisés par défaut !");
+}</code></pre>
+                    </div>
+                </div>
+
+            </div>
+        </details>
+
+        <details class="ui-accordion">
+            <summary>Input UX: Automatic Keyboard / Gamepad Panel Switching</summary>
+            <div class="ui-content">
+
+                <p class="section-lead">
+                    The input settings system improves usability by detecting the current device and automatically swapping between keyboard/mouse and gamepad panels. This prevents the settings screen from showing irrelevant control information.
+                </p>
+
+                <div class="center-img-container">
+                    <img src="ui-input-switch-demo.gif" alt="Keyboard and gamepad UI switching demo">
+                    <p class="media-caption">Suggested GIF: move the mouse, then press a gamepad button, showing the panel flip animation.</p>
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">1. Device Detection Only While Settings Are Open</h4>
+                        <p>
+                            The script checks for gamepad, keyboard and mouse activity only when the Settings panel is open. This avoids unnecessary processing and prevents accidental UI swaps during gameplay.
+                        </p>
+                        <p>
+                            Gamepad detection uses stick magnitude and button checks, while keyboard and mouse detection use the new Input System device states.
+                        </p>
+                    </div>
+                    <div class="tech-code">
+<pre><code class="language-csharp">private void Update()
+{
+    if (_menuManager == null || !_menuManager.IsSettingsOpen) return;
+
+    if (Gamepad.current != null && Gamepad.current.wasUpdatedThisFrame)
+    {
+        if (Gamepad.current.leftStick.ReadValue().magnitude &gt; 0.2f ||
+            Gamepad.current.rightStick.ReadValue().magnitude &gt; 0.2f ||
+            AnyGamepadButtonPressed())
+        {
+            TriggerPanelSwitch(false);
+            return;
+        }
+    }
+
+    if (Keyboard.current != null && Keyboard.current.anyKey.wasPressedThisFrame)
+    {
+        TriggerPanelSwitch(true);
+        return;
+    }
+
+    if (Mouse.current != null && Mouse.current.delta.ReadValue().magnitude &gt; 2.0f)
+    {
+        TriggerPanelSwitch(true);
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">2. 3D Flip Transition</h4>
+                        <p>
+                            The active panel switches at the midpoint of a Y-axis rotation. At 90 degrees, the panel is visually edge-on, making the swap almost invisible and giving the settings UI a polished transition.
+                        </p>
+                        <p>
+                            The animation uses <code>Time.unscaledDeltaTime</code>, making it safe during pause menus.
+                        </p>
+                    </div>
+                    <div class="tech-code">
+<pre><code class="language-csharp">private IEnumerator FlipAnimation(bool targetIsKeyboard)
+{
+    float halfDuration = _flipDuration / 2f;
+    float time = 0f;
+
+    while (time &lt; halfDuration)
+    {
+        time += Time.unscaledDeltaTime;
+        float progress = time / halfDuration;
+        float angle = Mathf.Lerp(0f, 90f, Mathf.SmoothStep(0f, 1f, progress));
+        _flipContainer.localRotation = Quaternion.Euler(0f, angle, 0f);
+        yield return null;
+    }
+
+    _keyboardPanel.SetActive(targetIsKeyboard);
+    _gamepadPanel.SetActive(!targetIsKeyboard);
+
+    time = 0f;
+
+    while (time &lt; halfDuration)
+    {
+        time += Time.unscaledDeltaTime;
+        float progress = time / halfDuration;
+        float angle = Mathf.Lerp(90f, 0f, Mathf.SmoothStep(0f, 1f, progress));
+        _flipContainer.localRotation = Quaternion.Euler(0f, angle, 0f);
+        yield return null;
+    }
+
+    _flipContainer.localRotation = Quaternion.identity;
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">3. Sensitivity Slider Linked to Gameplay</h4>
+                        <p>
+                            Sensitivity is saved immediately and then pushed to the active player controller. This makes the settings feel responsive because the player can test changes right away after leaving the menu.
+                        </p>
+                    </div>
+                    <div class="tech-code">
+<pre><code class="language-csharp">public void ChangeSensitivity(float value)
+{
+    PlayerPrefs.SetFloat(SensKey, value);
+    PlayerPrefs.Save();
+    UpdateText(value);
+
+    SimplePlayerController player = FindFirstObjectByType&lt;SimplePlayerController&gt;();
+    if (player != null)
+    {
+        player.UpdateSensitivity(value);
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+            </div>
+        </details>
+
+        <details class="ui-accordion">
+            <summary>Gamepad Icon Data: ScriptableObject Mapping</summary>
+            <div class="ui-content">
+
+                <p class="section-lead">
+                    The <strong>GamepadIconsData</strong> asset stores the relationship between Input System binding names and visual sprites. This makes button prompts data-driven instead of hardcoded in UI prefabs.
+                </p>
+
+                <div class="center-img-container">
+                    <img src="ui-gamepad-icons-data.png" alt="Gamepad icon data ScriptableObject">
+                    <p class="media-caption">Suggested image: Inspector view of the ScriptableObject list mapping buttonSouth, buttonEast, triggers and shoulders to sprites.</p>
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">Binding Path Cleanup</h4>
+                        <p>
+                            The Input System often returns paths such as <code>&lt;Gamepad&gt;/buttonSouth</code>. The data asset normalizes that string before comparing it against the configured icon list.
+                        </p>
+                        <p>
+                            Because the comparison is case-insensitive, the setup is more tolerant to naming variations.
+                        </p>
+                    </div>
+                    <div class="tech-code">
+<pre><code class="language-csharp">public Sprite GetIcon(string bindingPath)
+{
+    string cleanedPath = bindingPath
+        .Replace("&lt;Gamepad&gt;/", "")
+        .Replace("&lt;", "")
+        .Replace("&gt;", "");
+
+    foreach (var icon in iconsList)
+    {
+        if (string.Equals(icon.bindingPathName, cleanedPath, StringComparison.OrdinalIgnoreCase))
+        {
+            return icon.iconSprite;
+        }
+    }
+
+    return null;
+}</code></pre>
+                    </div>
+                </div>
+
+                <h4 class="ui-subtitle">Why this is useful</h4>
+                <ul class="bullet-list">
+                    <li><span class="highlight">Reusable:</span> The same icon database can be used by tutorials, settings screens and interaction prompts.</li>
+                    <li><span class="highlight">Artist-friendly:</span> Icons are assigned in the Inspector without changing code.</li>
+                    <li><span class="highlight">Scalable:</span> Additional controller layouts can be added later by expanding the data asset or creating platform-specific variants.</li>
+                </ul>
+
+            </div>
+        </details>
+
+        <details class="ui-accordion">
+            <summary>Final UI Flow: From Main Menu to Gameplay</summary>
+            <div class="ui-content">
+
+                <p class="section-lead">
+                    The complete UI system supports a clean player journey: start menu, settings configuration, credits sequence, transition into gameplay, temporary quest display, pause menu, and return to play.
+                </p>
+
+                <div class="ui-flow">
+                    <div class="ui-flow-step">Start Menu</div>
+                    <div class="ui-flow-arrow">→</div>
+                    <div class="ui-flow-step">Settings / Credits</div>
+                    <div class="ui-flow-arrow">→</div>
+                    <div class="ui-flow-step">Play</div>
+                    <div class="ui-flow-arrow">→</div>
+                    <div class="ui-flow-step">Quest HUD</div>
+                    <div class="ui-flow-arrow">→</div>
+                    <div class="ui-flow-step">Pause Menu</div>
+                </div>
+
+                <div class="center-img-container">
+                    <img src="ui-full-flow-showcase.gif" alt="Full UI flow showcase">
+                    <p class="media-caption">Suggested GIF: one continuous capture showing the whole UI loop from boot to pause and back to gameplay.</p>
+                </div>
+
+                <h4 class="ui-subtitle">Portfolio Summary</h4>
+                <p>
+                    This UI system demonstrates more than simple menu buttons. It combines state management, Unity Input System integration, PlayerPrefs persistence, Audio Mixer control, HDRP post-processing settings, animated RectTransform transitions, UX timing, and data-driven gamepad prompt mapping.
+                </p>
+                <p>
+                    The result is a modular and maintainable interface framework that can be expanded without rewriting the existing menu architecture.
+                </p>
+
+            </div>
+        </details>
+
+    </main>
+
+<script>
+    const currentPage = window.location.pathname.split("/").pop();
+    const navLinks = document.querySelectorAll('nav a');
+
+    navLinks.forEach(link => {
+        if (link.getAttribute('href') === currentPage) {
+            link.classList.add('active');
+        }
+    });
+</script>
+</body>
+</html>
