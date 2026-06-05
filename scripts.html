@@ -34,13 +34,13 @@
     <summary>Flashlight Battery & Energy Management System</summary>
     <div class="shader-content">
         
-        <p>Ce script gère l'intégralité du cycle de vie énergétique de la lampe torche. Au-delà d'une simple gestion de valeur (0-100%), le système utilise des <strong>Coroutines</strong> et des structures de données personnalisées pour coupler mécaniques de gameplay et retour visuel intuitif.</p>
+        <p>This script manages the entire energy lifecycle of the flashlight. Beyond simple value management (0-100%), the system utilizes <strong>Coroutines</strong> and custom data structures to couple gameplay mechanics with intuitive visual feedback.</p>
 
         <div class="tech-row">
             <div class="tech-desc">
-                <h4 style="color: #00adb5;">1. Système de Clignotement Dynamique</h4>
-                <p>Pour éviter une interface trop chargée, l'état de la batterie est communiqué via un comportement instable de la lumière. Le script utilise un tableau de <code class="language-csharp">FlickerSettings</code> configurable via l'inspecteur, permettant de définir des comportements distincts par paliers de batterie.</p>
-                <img src="FlickerinSettings.png" style="width: 100%; border-radius: 6px; margin: 10px 0;" alt="Inspecteur Flicker Configuration">
+                <h4 style="color: #00adb5;">1. Dynamic Flickering System</h4>
+                <p>To avoid a cluttered interface, the battery status is communicated via unstable light behavior. The script uses an array of <code class="language-csharp">FlickerSettings</code> configurable via the Inspector, allowing distinct behaviors to be defined for different battery thresholds.</p>
+                <img src="FlickerinSettings.png" style="width: 100%; border-radius: 6px; margin: 10px 0;" alt="Inspector Flicker Configuration">
             </div>
             <div class="tech-code">
 <pre><code class="language-cpp">
@@ -57,7 +57,7 @@ private IEnumerator FlickerRoutine(FlickerSettings settings) {
     _isFlickering = true;
     yield return new WaitForSeconds(Random.Range(settings.minDelay, settings.maxDelay));
     
-    // Séquence de clignotement aléatoire
+    // Random flickering sequence
     int flickers = Random.Range(3, 6);
     for (int i = 0; i < flickers; i++) {
         SetLightIntensity(Random.Range(settings.flickerMinIntensityPercent, 0.4f));
@@ -77,8 +77,8 @@ private IEnumerator FlickerRoutine(FlickerSettings settings) {
 
         <div class="tech-row">
             <div class="tech-desc">
-                <h4 style="color: #00adb5;">2. Mécanique de Recharge (ReloadBattery)</h4>
-                <p>La méthode <code class="language-cpp">ReloadBattery()</code> utilise une logique d'états pour gérer la progression. Elle vérifie si le joueur vient d'initier la charge et ajuste dynamiquement l'intensité lumineuse et permet de ractiver le <em>FlashBang</em> une fois un certains seuils atteints.</p>
+                <h4 style="color: #00adb5;">2. Recharge Mechanic (ReloadBattery)</h4>
+                <p>The <code class="language-cpp">ReloadBattery()</code> method uses state logic to manage progress. It checks if the player has just initiated charging, dynamically adjusts light intensity, and enables the <em>FlashBang</em> once specific thresholds are reached.</p>
             </div>
             <div class="tech-code">
 <pre><code class="language-cpp">
