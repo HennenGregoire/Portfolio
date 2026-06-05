@@ -31,7 +31,7 @@
     <main>
         <h3>VFX Systems & Gameplay Feedback</h3>
         <p class="page-intro">
-            This section presents the visual effects I created in Unity to support player feedback and interaction readability.
+            This section presents the visual effects I created in Unity to support player feedback and interaction readability. Each VFX is documented through its gameplay purpose, technical setup, Unity configuration and final in-game behavior.
         </p>
 
         <details class="ui-accordion">
@@ -209,6 +209,156 @@ public void RaiseBreaker()
                 </div>
             </div>
         </details>
+
+
+        <details class="ui-accordion">
+            <summary>Enemy Flash Smoke VFX</summary>
+            <div class="ui-content">
+
+                <p class="section-lead">
+                    This smoke VFX is triggered when the enemy is successfully flashed. It adds a clear gameplay confirmation on top of the animation reaction: the monster briefly evaporates from strong light, similar to a vampire burning under a powerful flash.
+                </p>
+
+                <div class="global-gifs">
+                    <div class="gif-card">
+                        <img src="vfx-smoke-vampire-sceneview-demo.gif" alt="Smoke VFX tested manually in Unity Scene view">
+                        <p>Scene view test: the VFX is manually triggered to validate the shape around the enemy mesh.</p>
+                    </div>
+                    <div class="gif-card">
+                        <img src="vfx-smoke-vampire-ingame-demo.gif" alt="Smoke VFX triggered in game when the enemy is flashed">
+                        <p>In-game result: the flash confirms that the enemy has been hit and is reacting to light.</p>
+                    </div>
+                </div>
+
+                <h4 class="ui-subtitle">VFX Breakdown</h4>
+                <div class="ui-feature-grid">
+                    <div class="ui-feature-card">
+                        <h5>Gameplay Feedback</h5>
+                        <p>The smoke appears when the flashlight affects the monster, making the successful flash readable for the player.</p>
+                    </div>
+                    <div class="ui-feature-card">
+                        <h5>Skinned Mesh Source</h5>
+                        <p>The particles are spawned from the enemy Skinned Mesh Renderer, so the effect follows the creature silhouette instead of using a generic sphere volume.</p>
+                    </div>
+                    <div class="ui-feature-card">
+                        <h5>Mesh Binding</h5>
+                        <p>A VFX Property Binder keeps the graph connected to the monster transform, allowing the smoke to stay aligned with the animated enemy.</p>
+                    </div>
+                    <div class="ui-feature-card">
+                        <h5>Short Dissolve Feel</h5>
+                        <p>Random lifetime, velocity and size give the particles a quick evaporating motion rather than a static cloud.</p>
+                    </div>
+                </div>
+
+                <hr class="ui-separator">
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">1. Exposed VFX Properties</h4>
+                        <p>
+                            The graph exposes timing, spawn rate, random speed ranges, random size ranges and lifetime controls. This makes the effect easy to tune from the Inspector without opening the VFX Graph every time.
+                        </p>
+                        <p>
+                            The most important reference is the enemy body renderer. By assigning the monster Skinned Mesh Renderer, the smoke is emitted from the actual creature surface, which sells the idea that the enemy is evaporating under the flash.
+                        </p>
+                    </div>
+                    <div class="tech-code">
+<pre><code class="language-cpp">
+// Example gameplay hook
+public void OnEnemyFlashed()
+{
+    if (_flashSmokeVFX != null)
+    {
+        _flashSmokeVFX.Play();
+    }
+
+    TriggerFlashReactionAnimation();
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="center-img-container">
+                    <img src="vfx-smoke-vampire-properties.png" alt="Unity Inspector properties for the enemy flash smoke VFX Graph">
+                    <p class="media-caption">Exposed VFX Graph properties: duration, Skinned Mesh Renderer, spawn rate, random velocity, random size and lifetime range.</p>
+                </div>
+
+                <h4 class="ui-subtitle">Main VFX Graph Settings</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Area</th>
+                            <th>Setup</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="highlight">Spawn</td>
+                            <td>Constant spawn rate with exposed duration</td>
+                            <td>Controls how long the smoke burst remains active after the flash.</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight">Initialize</td>
+                            <td>Set Position from Skinned Mesh</td>
+                            <td>Emits particles directly from the enemy body silhouette.</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight">Velocity</td>
+                            <td>Random uniform X/Y/Z speed ranges</td>
+                            <td>Breaks up the smoke movement so it feels organic and unstable.</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight">Output</td>
+                            <td>Flipbook render quad with additive blend</td>
+                            <td>Uses animated smoke texture frames to create a soft evaporating look.</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight">Over Lifetime</td>
+                            <td>Texture index, color and size over life</td>
+                            <td>Fades and shrinks the smoke so it disappears quickly after the feedback moment.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr class="ui-separator">
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">2. VFX Property Binder</h4>
+                        <p>
+                            The VFX Property Binder sends the enemy transform into the graph. This keeps the effect connected to the monster hierarchy and avoids manually updating positions in custom code.
+                        </p>
+                        <p>
+                            This is especially useful because the enemy is animated: the graph can receive the correct transform reference while still using the Skinned Mesh Renderer as the particle source.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">3. Graph Structure</h4>
+                        <p>
+                            The graph is organized as a simple loop: exposed properties drive the spawn and initialization blocks, particles are placed on the skinned mesh, then rendered as flipbook quads with color and size controlled over lifetime.
+                        </p>
+                        <p>
+                            This keeps the effect efficient and readable while still giving enough variation to make the smoke feel alive when the monster is hit by the flashlight.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="center-img-container">
+                    <img src="vfx-smoke-vampire-vfx-graph-overview.png" alt="Full Unity VFX Graph for the enemy flash smoke effect">
+                    <p class="media-caption">Full VFX Graph overview: exposed parameters, skinned mesh spawn, random velocity, flipbook output and over-lifetime controls.</p>
+                </div>
+
+                <h4 class="ui-subtitle">Portfolio Summary</h4>
+                <p>
+                    This VFX strengthens the flashlight mechanic by combining gameplay feedback with visual storytelling. The smoke confirms that the flash worked, while the skinned mesh emission makes the monster feel like it is burning or evaporating from its own body instead of simply playing a generic particle burst.
+                </p>
+
+            </div>
+        </details>
+
 
     </main>
 
