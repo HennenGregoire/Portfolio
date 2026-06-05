@@ -191,7 +191,7 @@ private IEnumerator QuestTimerRoutine()
 
                 <div class="center-img-container">
                     <img src="ui-quest-panel-demo.gif" alt="Quest panel appearance and auto hide demo">
-                    <p class="media-caption">Suggested GIF: quest panel appearing after Play/Continue, staying visible in pause, then hiding again in gameplay.</p>
+                   
                 </div>
 
             </div>
@@ -317,7 +317,7 @@ private void RegisterUIEvents()
 
                 <div class="center-img-container">
                     <img src="ui-graphics-settings.png" alt="Graphics settings panel with resolution, fullscreen, gamma, black and white and VSync options">
-                    <p class="media-caption">Suggested screenshot: the Graphics settings panel showing Resolution, Fullscreen, Quality, VSync, Gamma and Black & White options.</p>
+                   
                 </div>
 
                 <div class="tech-row">
@@ -633,6 +633,44 @@ public Sprite GetIcon(string bindingPath)
                 <div class="center-img-container">
                     <img src="ui-full-flow-showcase.gif" alt="Full UI flow showcase">
                 </div>
+
+                <div class="center-img-container">
+                    <img src="ui-credits-showcase.gif" alt="Credits sequence showcase">
+                
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">Credits Sequence Integration</h4>
+                        <p>
+                            The credits panel is also controlled through the <strong>MainMenuManager</strong>. When the player opens the credits from the main menu, the menu panel is hidden, the credits panel is activated, and a separate camera travelling routine starts the automatic scrolling sequence.
+                        </p>
+                        <p>
+                            I separated the credits showcase from the general menu navigation GIF because it has its own pacing and presentation. This makes the portfolio page clearer: one GIF demonstrates the full menu flow, while the credits GIF focuses only on the cinematic scrolling credits behavior.
+                        </p>
+                    </div>
+                    <div class="tech-code">
+<pre><code class="language-cpp">
+public void OpenCredits() 
+{
+    _credittPanel.SetActive(true);
+    cameraTraveling.StartCoroutine(cameraTraveling.AutoScrollCreditsRoutine());
+    _menuPanel.SetActive(false);
+}
+
+public void BackMenu()
+{
+    _credittPanel.SetActive(false);
+    _isPaused = false;
+    _isMenuOpen = true;
+    _isSettingsOpen = false;
+    _settingsPanel.SetActive(false);
+    _menuPanel.SetActive(true);
+    _pausePanel.SetActive(false);
+}</code></pre>
+                    </div>
+                </div>
+
 
                 <h4 class="ui-subtitle">Portfolio Summary</h4>
                 <p>
