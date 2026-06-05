@@ -67,7 +67,6 @@
         <h3>Here are my Tools</h3>
         <p style="text-align: center; color: #aaa; margin-bottom: 40px;">Showcasing editor tools and pipelines developed to optimize team workflow and save development time.</p>
 
-        <!-- ACCORDION: 3D TEXTURE GENERATOR -->
         <details class="tool-accordion">
             <summary>Procedural 3D Texture Generator (Unity Editor / C#)</summary>
             <div class="tool-content">
@@ -119,7 +118,6 @@
 
                 <hr style="border: 0; border-top: 1px solid #333; margin: 40px 0;">
 
-                <!-- STEP 1 -->
                 <div class="tech-row">
                     <div class="tech-desc">
                         <h4 style="color: #00adb5; margin-top:0;">1. Initializing the Texture3D Container</h4>
@@ -132,7 +130,6 @@ texture.filterMode = FilterMode.Bilinear;</code></pre>
                     </div>
                 </div>
 
-                <!-- STEP 2 -->
                 <div class="tech-row">
                     <div class="tech-desc">
                         <h4 style="color: #00adb5; margin-top:0;">2. Mathematical Simplex Sampling</h4>
@@ -142,11 +139,10 @@ texture.filterMode = FilterMode.Bilinear;</code></pre>
 <pre><code><span class="c-keyword">float3</span> pos = <span class="c-keyword">new</span> float3(x, y, z) / (<span class="c-keyword">float</span>)size * frequency;
 <span class="c-keyword">float</span> noiseValue = (noise.snoise(pos) + <span class="c-var">1f</span>) * <span class="c-var">0.5f</span>;
 
-colors[index] = <span class="c-keyword">new</span> Color(noiseValue, noiseValue, noiseValue, <span class="c-var">1f</span>);</code></pre>
+colors[index] = <span class="c-keyword">new</span> Color(noiseValue, noiseValue, noiseValue, <span class="var">1f</span>);</code></pre>
                     </div>
                 </div>
 
-                <!-- STEP 3 -->
                 <div class="tech-row">
                     <div class="tech-desc">
                         <h4 style="color: #00adb5; margin-top:0;">3. Data Writing & UX Selection Focus</h4>
@@ -178,111 +174,126 @@ texture.Apply();
             </div>
         </details>
 
-        <!-- ACCORDION: PROCEDURAL MODULAR MAP GENERATOR -->
         <details class="tool-accordion">
-            <summary>Modular Map & Level Generator (Unity Editor / C#)</summary>
+            <summary>Procedural Modular Map Generator (Unity Editor / C#)</summary>
             <div class="tool-content">
                 
-                <p style="font-size: 1.1em; color: #aaa; text-align: center;">An editor-integrated pipeline tool developed to automatically instantiate and align modular environments (rooms, corridors) based on manual layout anchor points.</p>
+                <p style="font-size: 1.1em; color: #aaa; text-align: center;">An advanced in-editor environment generator designed to speed up blockout, prototyping, and level layout assembly directly via manual scene anchor nodes.</p>
 
                 <div class="center-img-container">
-                    <img src="mapgen-workflow-demo.gif" alt="Procedural Map Generation Tool Demonstration">
-                    <p style="color: #888; font-size: 0.9em; margin-top: 5px;">Real-time modular environment instantiation directly in the Scene View</p>
+                    <img src="map-generator-preview.png" alt="Procedural Map Generation Preview">
+                    <p style="color: #888; font-size: 0.9em; margin-top: 5px;">Fully modular map automatically assembled from custom editor components and user nodes</p>
                 </div>
 
-                <h4 style="color: #00adb5; border-bottom: 1px solid #333; padding-bottom: 5px;">Objective & Workflow</h4>
-                <p>Built to accelerate grayboxing, prototyping, and layout assembly phases. The system allows designers to map out pathways or room outlines via anchor nodes, instantly managing the correct placement and orientation of walls, corner trims, floors, and ceilings.</p>
-
-                <h4 style="color: #00adb5; border-bottom: 1px solid #333; padding-bottom: 5px; margin-top: 30px;">Tool Architecture & Editor UI</h4>
-                <p>To strictly separate core generation mathematics from interface rendering, the pipeline is decoupled into two primary C# components:</p>
+                <h4 style="color: #00adb5; border-bottom: 1px solid #333; padding-bottom: 5px;">Objective & Architecture</h4>
+                <p>The primary goal is to minimize time spent on repetitive tasks by automating the placement of basic architectural modules (walls, corners, floors, and ceilings). Designers can focus directly on the level design flow instead of manual modular snapping.</p>
+                
+                <p>The system decouples the layout data processing from the visual representation by using two specialized classes:</p>
                 <ul class="bullet-list">
-                    <li><span class="highlight">MapGeneratorEditor:</span> A custom Inspector implementation providing an ergonomic layout window with instant controls.</li>
-                    <li><span class="highlight">MapGenerator:</span> The underlying modular processing engine handling geometry routines and asset pooling.</li>
+                    <li><span class="highlight">MapGenerator:</span> The core structural logic engine controlling path data, vector remapping, and validation arrays.</li>
+                    <li><span class="highlight">MapGeneratorEditor:</span> A custom inspector layer injecting instant action buttons to control scene state without running the game.</li>
                 </ul>
+
+                <h4 style="color: #00adb5; border-bottom: 1px solid #333; padding-bottom: 5px; margin-top: 30px;">Custom Editor Actions</h4>
+                <p>The tool exposes explicit controls inside the Inspector interface to guarantee rapid iteration and real-time environment validation:</p>
 
                 <table>
                     <thead>
                         <tr>
-                            <th>Inspector Button</th>
-                            <th>Internal Operation</th>
+                            <th>Editor Button</th>
+                            <th>Internal Execution Logic</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="highlight">Generate Map</td>
-                            <td>Triggers the full layout generation pass based on active anchor data.</td>
+                            <td class="highlight">Générer la map</td>
+                            <td>Clears memory buffers, scans active scene node lists, instances modular prefabs, and structures the scene hierarchy.</td>
                         </tr>
                         <tr>
-                            <td class="highlight">Clear Map</td>
-                            <td>Safely purges and resets previous procedural instances to ensure clean scene state.</td>
+                            <td class="highlight">Nettoyer / Effacer</td>
+                            <td>Performs a surgical teardown of the generated root GameObject to leave the editor hierarchy completely clean.</td>
                         </tr>
                     </tbody>
                 </table>
 
                 <div class="center-img-container">
-                    <img src="mapgen-ui-inspector.png" alt="Custom Unity Inspector UI layout">
+                    <img src="map-tool-ui.png" alt="Map Generator Inspector Custom UI">
+                    <p style="color: #888; font-size: 0.9em; margin-top: 5px;">Custom inspector setup managing complex structures and execution actions</p>
                 </div>
 
-                <h4 style="color: #00adb5; border-bottom: 1px solid #333; padding-bottom: 5px; margin-top: 30px;">Path Logic & Generation Routine</h4>
-                <p>Environmental data structures are declared via structural vectors. Each custom path segment handles data collections such as an array of anchor nodes, section branding names, open/closed loop Boolean parameters, and tiling flags for ceilings and floors.</p>
+                <h4 style="color: #00adb5; border-bottom: 1px solid #333; padding-bottom: 5px; margin-top: 30px;">Core Mechanics & Algorithms</h4>
                 
+                <p><span class="highlight">1. Anchor Paths Configuration:</span> Every custom wall path dictates structural constraints via manual transforms. The logic tracks if the system should process closed loops (rooms) or open tracks (corridors), computing clockwise or counter-clockwise vertex layouts automatically.</p>
+                
+                <p><span class="highlight">2. Wall & Corner Assembly:</span> The algorithm measures distance vectors between node handles. It snaps matching grid segments, matches orientation vectors, and handles intersections by measuring adjacent entry/exit angles to choose and rotate corner modules accurately.</p>
+
+                <p><span class="highlight">3. Dual-Method Surface Filling:</span> For closed spaces, geometric polygon inclusion checks compute bounding limits to spawn tile arrays. For paths/corridors, a progressive wave-propagation algorithm pushes rows outward until a collision node or edge restriction terminates the grid growth.</p>
+
                 <hr style="border: 0; border-top: 1px solid #333; margin: 40px 0;">
 
-                <!-- STEP 1 -->
                 <div class="tech-row">
                     <div class="tech-desc">
-                        <h4 style="color: #00adb5; margin-top:0;">1. Wall Fitting & Corner Tracking</h4>
-                        <p>The system iterates along anchor arrays to compute segment directions and distances. Wall prefabs are automatically spawned at consistent steps along the segment vector, inheriting matching rotational data.</p>
-                        <p>Where two distinct segments meet, corner angle calculations trigger specific trim prefab variants to prevent ugly physical overlaps.</p>
+                        <h4 style="color: #00adb5; margin-top:0;">1. System Initialization & Safety Locks</h4>
+                        <p>The algorithm wipes existing references before starting structural calculations. It instantiates a structured GameObject parent framework and caches spatial data in a <code>HashSet&lt;Vector3Int&gt;</code> to prevent overlapping assets during multi-room construction.</p>
                     </div>
                     <div class="tech-code">
-<pre><code><span class="c-keyword">Vector3</span> direction = (targetNode - startNode).normalized;
-<span class="c-keyword">Quaternion</span> wallRotation = <span class="c-keyword">Quaternion</span>.LookRotation(direction);
-<span class="c-keyword">GameObject</span> wall = Instantiate(wallPrefab, spawnPos, wallRotation);</code></pre>
-                    </div>
-                </div>
-
-                <!-- STEP 2 -->
-                <div class="tech-row">
-                    <div class="tech-desc">
-                        <h4 style="color: #00adb5; margin-top:0;">2. Smart Flood Fill Tiling</h4>
-                        <p>Placing thousands of floor and ceiling units by hand is counterproductive. To bypass this, an initial bounding grid array is laid down following structural boundaries.</p>
-                        <p>Then, a customized <strong>Flood Fill propagation algorithm</strong> automatically crawls empty spaces, scanning adjacent neighbor entries to cleanly patch inner rooms without tile duplication.</p>
-                    </div>
-                    <div class="tech-code">
-<pre><code><span class="c-keyword">if</span> (!tileRegistry.Contains(targetPos) && CheckNeighbors(targetPos)) 
+<pre><code><span class="c-keyword">public void</span> GenererMap()
 {
-    SpawnGridElement(targetPos);
-    tileRegistry.Add(targetPos);
+    NettoyerMap();
+    dallesInstanciees.Clear();
+    
+    conteneurMap = <span class="c-keyword">new</span> GameObject(<span class="c-var">"Map_Generee"</span>);
+    conteneurMap.transform.parent = <span class="c-keyword">this</span>.transform;
 }</code></pre>
                     </div>
                 </div>
 
-                <!-- STEP 3 -->
                 <div class="tech-row">
                     <div class="tech-desc">
-                        <h4 style="color: #00adb5; margin-top:0;">3. Hierarchy Routing & Bounds Check</h4>
-                        <p>For closed layouts, geometric poly-checks ensure tiles never leak outside designated perimeters. Instantiated assets are categorized automatically inside a strict nested structure to ensure easy debugging.</p>
+                        <h4 style="color: #00adb5; margin-top:0;">2. Anchor Space Delta Processing</h4>
+                        <p>The system loops over adjacent scene node data, extracting direction normals and offsetting standard module widths to prevent mesh z-fighting. It automatically isolates distance parameters before invoking line generation methods.</p>
                     </div>
                     <div class="tech-code">
-<pre><code><span class="c-keyword">Transform</span> roomParent = <span class="c-keyword">new</span> <span class="c-keyword">GameObject</span>(roomName).transform;
-roomParent.SetParent(mapRootContainer);
-wallInstance.transform.SetParent(roomParent);</code></pre>
+<pre><code>Vector3 direction = pB.position - pA.position;
+Vector3 directionNormalisee = direction.normalized;
+
+Vector3 positionDepartReelle = pA.position + (directionNormalisee * longueurCoin);
+Vector3 positionArriveeReelle = pB.position - (directionNormalisee * longueurCoin);
+<span class="c-keyword">float</span> distancePourMurs = (positionArriveeReelle - positionDepartReelle).magnitude;</code></pre>
                     </div>
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">3. Wave Propagation Control</h4>
+                        <p>To avoid script lockups or memory overflows during iterative layout expansion, an internal loop monitor serves as a hard safety cutoff. It checks bounding collision sets and kills wave progression once max limits are reached.</p>
+                    </div>
+                    <div class="tech-code">
+<pre><code><span class="c-keyword">bool</span> auMoinsUneVagueActive = <span class="c-var">true</span>;
+<span class="c-keyword">int</span> etape = 1;
+
+<span class="c-keyword">while</span> (auMoinsUneVagueActive && etape <= seuilSecuriteMax)
+{
+    auMoinsUneVagueActive = <span class="c-var">false</span>;
+    <span class="c-comment">// Wave generation loop logic...</span>
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="center-img-container">
+                    <img src="map-generation-demo.gif" alt="Map Generation Real-time Demo">
+                    <p style="color: #888; font-size: 0.9em; margin-top: 5px;">Real-time layout building showcasing rapid cleanup, segment drawing, and hierarchical structural organization</p>
                 </div>
 
                 <hr style="border: 0; border-top: 1px solid #333; margin: 40px 0;">
 
-                <h4 style="color: #00adb5; margin-top:30px;">Production Impact & Key Takeaways</h4>
-                <p>The implementation of this tool was highly successful, saving substantial production time by bypassing the repetitive task of manually positioning over 3,000 modular tiles and hundreds of walls. Whenever structural parameters evolved, regenerating the entire base infrastructure only required adjusting a few anchor positions.</p>
-                
-                <ul class="bullet-list">
-                    <li><span class="highlight">Design Constraints:</span> The tool operated under specific design limits—anchor distances required increments of 2 units to strictly match the 2-meter physical dimensions of the core wall assets.</li>
-                    <li><span class="highlight">Human Intervention:</span> The framework was purposefully built as an infrastructure layout generator rather than an absolute automated solution. Level designers still stepped in manually to populate the environments with props, interactive doors, and fix minor corner overlaps where custom shapes deviated from the 2-meter tile metric.</li>
-                </ul>
+                <h4 style="color: #00adb5; margin-top:30px;">Technical Breakdown & Future Outlooks</h4>
+                <p>The tool drastically reduces production overhead by automating thousands of component placements. However, due to complex geometric filling states, occasional micro-gaps or loose edge dalles might require final manual adjustments by the level designer.</p>
+                <p style="font-style: italic; color: #aaa;">Project Note: The achieved performance met the initial design requirements perfectly. Future iterations could integrate automated gameplay asset spawning (doors, interactive triggers, gameplay points of interest) and multi-layered grid validation for multi-story level designs.</p>
 
             </div>
         </details>
+
     </main>
 
 </body>
