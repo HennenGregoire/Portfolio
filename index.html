@@ -27,6 +27,11 @@
             color: #00adb5;
             font-weight: 400;
         }
+        nav a.active {
+    background-color: #00adb5;
+    color: #1a1a1a;
+    border-color: #00adb5;
+}
         /* Style de la barre de navigation (les boutons) */
         nav {
             margin-top: 20px;
@@ -74,6 +79,19 @@
         <h3>Bienvenue sur mon portfolio</h3>
         <p>Présentation de mes outils, shaders et VFX réalisés durant la jam de 3 semaines.</p>
         </main>
+<script>
+    // Récupère le nom de la page actuelle (ex: "shaders.html")
+    const currentPage = window.location.pathname.split("/").pop();
 
+    // Sélectionne tous les liens dans la nav
+    const navLinks = document.querySelectorAll('nav a');
+
+    navLinks.forEach(link => {
+        // Si le href du lien correspond à la page actuelle, ajoute la classe "active"
+        if (link.getAttribute('href') === currentPage) {
+            link.classList.add('active');
+        }
+    });
+</script>
 </body>
 </html>
