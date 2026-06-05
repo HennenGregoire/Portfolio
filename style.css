@@ -65,29 +65,17 @@ th { background-color: #00adb5; color: #1a1a1a; font-weight: bold; }
 
 .tech-row { display: flex; gap: 25px; margin: 30px 0; align-items: center; }
 .tech-desc { flex: 1; }
-.tech-code { 
-    flex: 1; 
-    background-color: #0d1117; 
-    padding: 15px; 
-    border-radius: 6px; 
-    overflow-x: auto; 
-    border: 1px solid #30363d; 
-    text-align: left; /* Pour aligner le code à gauche */
-}
+.tech-code { flex: 1; background-color: #0d1117; padding: 15px; border-radius: 6px; overflow-x: auto; border: 1px solid #30363d; }
 
-pre { 
-    margin: 0; 
-    font-family: 'Consolas', 'Monaco', monospace;
-    font-size: 0.9em;
-    color: #e6edf3; /* Une couleur plus neutre et lisible que le rose */
-    line-height: 1.5;
-}
+        
 
-/* On garde le rose pour les mots-clés si tu veux, mais moins envahissant */
-code { 
-    font-family: inherit;
-    color: inherit;
-}
+        pre { margin: 0; }
+
+        code { font-family: 'Consolas', 'Courier New', Courier, monospace; color: #ff79c6; font-size: 0.9em; }
+
+        .c-keyword { color: #ff7b72; }
+
+        .c-var { color: #79c0ff; }
 
 .center-img-container { text-align: center; margin: 25px 0; }
 .center-img-container img { max-width: 100%; width: 700px; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
