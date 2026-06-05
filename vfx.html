@@ -331,6 +331,180 @@ public void OnEnemyFlashed()
         </details>
 
 
+
+        <details class="ui-accordion">
+            <summary>Machine Charge Popcorn VFX</summary>
+            <div class="ui-content">
+
+                <p class="section-lead">
+                    This VFX is triggered when the machine reaches 100% charge. The <strong>VFXChargeTrigger</strong> script activates two Visual Effect Graphs at the same time: one fills the background with popcorn pieces, while the second one makes popcorn jump upward to create a stronger completion feedback.
+                </p>
+
+                <div class="center-img-container">
+                    <img src="vfx-popcorn-charge-ingame-demo.gif" alt="Popcorn VFX triggered when the machine reaches full charge">
+                    <p class="media-caption">Final in-game behavior: once the machine is fully charged, the popcorn VFX ramps up, stays visible for a short moment, then fades out automatically.</p>
+                </div>
+
+                <h4 class="ui-subtitle">VFX Breakdown</h4>
+                <div class="ui-feature-grid">
+                    <div class="ui-feature-card">
+                        <h5>Charge Trigger</h5>
+                        <p>The effect starts only when the machine reaches full charge, making the completion state very readable for the player.</p>
+                    </div>
+                    <div class="ui-feature-card">
+                        <h5>Two Graph Setup</h5>
+                        <p>One graph handles popcorn appearing in the background, while the second graph adds jumping popcorn for a more dynamic celebration.</p>
+                    </div>
+                    <div class="ui-feature-card">
+                        <h5>Shared Spawn Control</h5>
+                        <p>Both graphs expose the same spawn parameter name, so one script can smoothly increase and decrease their intensity together.</p>
+                    </div>
+                    <div class="ui-feature-card">
+                        <h5>Auto Fade-Out</h5>
+                        <p>After the activation window, the script lowers the spawn count back to zero and disables both VFX GameObjects.</p>
+                    </div>
+                </div>
+
+                <hr class="ui-separator">
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">1. Script-Driven Activation</h4>
+                        <p>
+                            The <code>VFXChargeTrigger</code> script is called by the machine when it becomes fully charged. Instead of instantly enabling a fixed burst, it animates a shared spawn parameter over time.
+                        </p>
+                        <p>
+                            This makes the effect feel like it is building up with the machine: the popcorn amount ramps from 0% to 100%, holds for a few seconds, then fades back down automatically.
+                        </p>
+                    </div>
+                    <div class="tech-code">
+<pre><code class="language-cpp">
+public void TriggerVFXActivation()
+{
+    if (vfx1 != null) vfx1.gameObject.SetActive(true);
+    if (vfx2 != null) vfx2.gameObject.SetActive(true);
+
+    if (activeCoroutine != null)
+        StopCoroutine(activeCoroutine);
+
+    activeCoroutine = StartCoroutine(
+        AnimateSpawnCount(0f, 1f, true, activationDuration, true));
+}</code></pre>
+                    </div>
+                </div>
+
+                <h4 class="ui-subtitle">Script Parameters</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Value / Role</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="highlight">vfx1MaxSpawn</td>
+                            <td>1000</td>
+                            <td>Controls the maximum spawn intensity for the background popcorn graph.</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight">vfx2MaxSpawn</td>
+                            <td>100</td>
+                            <td>Controls the maximum spawn intensity for the jumping popcorn graph.</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight">activationDelay</td>
+                            <td>3 seconds</td>
+                            <td>Waits before the VFX starts ramping up, giving the machine charge event a small anticipation delay.</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight">activationDuration</td>
+                            <td>8 seconds</td>
+                            <td>Defines how long the spawn count takes to reach full intensity.</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight">deactivationDelay</td>
+                            <td>14 seconds</td>
+                            <td>Keeps the VFX visible at full intensity before the automatic fade-out starts.</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight">deactivationDuration</td>
+                            <td>1 second</td>
+                            <td>Quickly fades the spawn count back to zero and disables the VFX objects.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr class="ui-separator">
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">2. Background Popcorn Graph</h4>
+                        <p>
+                            The first VFX Graph is used for the popcorn that appears in the background. It uses a box-shaped spawn area, long particle lifetime and mesh output to populate the scene with many small popcorn meshes.
+                        </p>
+                        <p>
+                            The graph also uses random size and random rotation, so the duplicated popcorn pieces do not look like repeated identical meshes.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="center-img-container">
+                    <img src="vfx-popcorn-background-vfx-graph.png" alt="VFX Graph for popcorn appearing in the background">
+                    <p class="media-caption">Background popcorn graph: controlled spawn count, box position shape, mesh output, random size and random rotation.</p>
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">3. Jumping Popcorn Graph</h4>
+                        <p>
+                            The second VFX Graph uses a stronger upward velocity and gravity, making popcorn pieces jump and fall back down. This creates the more dynamic part of the feedback when the machine reaches 100% charge.
+                        </p>
+                        <p>
+                            Collision is enabled in the update stage, so the particles can interact with the local box area instead of simply flying through the effect volume.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="center-img-container">
+                    <img src="vfx-popcorn-jump-vfx-graph.png" alt="VFX Graph for popcorn pieces jumping upward">
+                    <p class="media-caption">Jumping popcorn graph: randomized direction, gravity, collision box, mesh output and shared spawn control.</p>
+                </div>
+
+                <div class="tech-row">
+                    <div class="tech-desc">
+                        <h4 style="color: #00adb5; margin-top:0;">4. Shared Spawn Ramp</h4>
+                        <p>
+                            Both VFX Graphs expose a float parameter named <code>SpawnRate</code>. The script writes different maximum values to each graph, but drives them using the same normalized percentage.
+                        </p>
+                        <p>
+                            This keeps both layers synchronized while still allowing the background popcorn and jumping popcorn to have different densities.
+                        </p>
+                    </div>
+                    <div class="tech-code">
+<pre><code class="language-cpp">
+float currentPercent = Mathf.Lerp(
+    initialPercent,
+    endPercent,
+    elapsedTime / currentTransitionDuration);
+
+if (vfx1 != null)
+    vfx1.SetFloat(spawnParameterName, currentPercent * vfx1MaxSpawn);
+
+if (vfx2 != null)
+    vfx2.SetFloat(spawnParameterName, currentPercent * vfx2MaxSpawn);</code></pre>
+                    </div>
+                </div>
+
+                <h4 class="ui-subtitle">Portfolio Summary</h4>
+                <p>
+                    This VFX combines gameplay state, scripting and Visual Effect Graph layering. The charge script turns a 100% machine state into a readable visual reward, while the two graph setup separates ambient background filling from more energetic jumping popcorn feedback.
+                </p>
+
+            </div>
+        </details>
+
     </main>
 
 <script>
