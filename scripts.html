@@ -1,4 +1,35 @@
-<details class="shader-accordion" open>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scripts - Gregoire Hennen</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</head>
+
+<body>
+
+    <header>
+        <h1>Gregoire Hennen</h1>
+        <h2>Technical Artist</h2>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="vfx.html">VFX</a>
+            <a href="shaders.html">Shaders</a>
+            <a href="tools.html">Tools</a>
+            <a href="scripts.html">Scripts</a>
+            <a href="lighting.html">Lighting</a>
+        </nav>
+    </header>
+
+    <main>
+        <h3>Core Gameplay Scripts</h3>
+
+        <details class="shader-accordion">
     <summary>Flashlight Battery & Energy Management System</summary>
     <div class="shader-content">
         
@@ -78,3 +109,17 @@ public void ReloadBattery() {
 
     </div>
 </details>
+
+    </main>
+
+<script>
+    const currentPage = window.location.pathname.split("/").pop();
+    const navLinks = document.querySelectorAll('nav a');
+    navLinks.forEach(link => {
+        if (link.getAttribute('href') === currentPage) {
+            link.classList.add('active');
+        }
+    });
+</script>
+</body>
+</html>
