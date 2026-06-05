@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -240,27 +240,27 @@ for(int y=-1; y<=1; y++) {
             <summary>Rendering: X-Ray Flashlight Layering (HDRP Custom Pass)</summary>
             <div class="shader-content">
                 
-                <p style="text-align: center; font-size: 1.1em; color: #aaa;">To ensure optimal gameplay visibility, the player's flashlight needs to be rendered on top of every world object (X-Ray effect) while maintaining its internal structure and self-sorting perfectly.</p>
+                <p style="text-align: center; font-size: 1.1em; color: #aaa;">To ensure optimal gameplay visibility, the player's flashlight must always be rendered on top of every world object (X-Ray sorting) while accurately maintaining its internal geometry and sub-mesh sorting order.</p>
                 
                 <div class="triple-gifs">
                     <div class="gif-card">
                         <img src="Flashlight_NoCustomPass.gif" alt="No Custom Pass">
-                        <p><span>1. Sans Custom Pass :</span> La lampe est masquée par les décors et les murs du monde.</p>
+                        <p><span>1. No Custom Pass:</span> The flashlight mesh is realistically hidden behind world geometry and environment walls.</p>
                     </div>
                     <div class="gif-card">
                         <img src="Flashlight_Pass1Only.gif" alt="Pass 1 Only">
-                        <p><span>2. Première Pass Seule :</span> Visible à travers tout, mais <span style="color: #ff7b72;">l'ordre d'affichage interne est erroné</span> (les composants se superposent mal).</p>
+                        <p><span>2. First Pass Only:</span> Rendered on top of everything, but <span style="color: #ff7b72;">internal sub-meshes are broken</span> (the flashlight components clip and sort backwards).</p>
                     </div>
                     <div class="gif-card">
                         <img src="Flashlight_BothPasses.gif" alt="Both Passes Active">
-                        <p><span>3. Les Deux Passes Actives :</span> La lampe apparaît toujours devant le monde, et sa géométrie est <span style="color: #00adb5;">rendue proprement</span>.</p>
+                        <p><span>3. Both Passes Active:</span> The flashlight consistently shows up in front of the world, and all its internal parts <span style="color: #00adb5;">sort beautifully</span>.</p>
                     </div>
                 </div>
                 
                 <div class="settings-img-container">
-                    <p style="color: #00adb5; font-weight: bold; margin-bottom: 10px;">Architecture du double DrawRenderersCustomPass dans Unity HDRP :</p>
+                    <p style="color: #00adb5; font-weight: bold; margin-bottom: 10px;">Dual DrawRenderersCustomPass Architecture in Unity HDRP:</p>
                     <p style="font-size: 0.95em; color: #aaa; max-width: 800px; margin: 0 auto 15px auto; text-align: left;">
-                        Pour arriver à ce résultat impeccable, l'injection dans le pipeline utilise deux passes successives filtrant le Layer Mask <strong>"Flashlight"</strong> :
+                        To achieve this flawless sorting system, the camera injection pipeline processes the <strong>"Flashlight"</strong> Layer Mask using two consecutive specialized render passes:
                     </p>
                     <img src="ImageCustomPassFlashlight.png" alt="Unity HDRP Custom Pass Flashlight Configuration">
                 </div>
@@ -269,14 +269,14 @@ for(int y=-1; y<=1; y++) {
 
                 <div class="tech-row">
                     <div class="tech-desc">
-                        <h4 style="color: #00adb5; margin-top:0;">Pass 1: Rendre devant le monde</h4>
-                        <p>La première pass force l'affichage de la lampe par-dessus l'environnement. Elle vide le tampon de profondeur existant (<code>Clear Flags: Depth</code>) et utilise un Depth Test configuré sur <strong>"Always"</strong>.</p>
-                        <p>L'objet ignore ainsi la géométrie de la scène globale, mais ce traitement global détruit l'ordre de rendu des sous-éléments de la lampe elle-même.</p>
+                        <h4 style="color: #00adb5; margin-top:0;">Pass 1: Overriding World Geometry</h4>
+                        <p>The initial pass handles pulling the object through the environment. It clears the existing depth buffer context (<code>Clear Flags: Depth</code>) and runs a depth comparison test set to <strong>"Always"</strong>.</p>
+                        <p>While this successfully draws the flashlight through solid walls, it unfortunately flattens and destroys the relative depth values required for the flashlight's own overlapping pieces.</p>
                     </div>
                     <div class="tech-desc">
-                        <h4 style="color: #00adb5; margin-top:0;">Pass 2: Tri et correction de l'objet</h4>
-                        <p>La deuxième pass vient corriger l'affichage interne. Configurée avec un <code>Clear Flags: None</code> pour conserver le contexte, elle réinitialise le Depth Test sur <strong>"Less Equal"</strong>.</p>
-                        <p>Cela permet aux différents sub-meshes de la lampe (lentille, corps, boutons) de se tester et de se trier à nouveau correctement les uns par rapport aux autres.</p>
+                        <h4 style="color: #00adb5; margin-top:0;">Pass 2: Re-enforcing Self-Sorting Order</h4>
+                        <p>The subsequent pass steps in to mend the inner artifacting. Operating with <code>Clear Flags: None</code> to retain the newly established foreground layer, it switches the depth comparison back to <strong>"Less Equal"</strong>.</p>
+                        <p>This allows all local sub-elements to evaluate against each other normally, establishing proper self-occlusion.</p>
                     </div>
                 </div>
 
