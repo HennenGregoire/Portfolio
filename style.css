@@ -73,3 +73,31 @@ code { font-family: 'Consolas', 'Courier New', Courier, monospace; color: #ff79c
 .center-img-container img { max-width: 100%; width: 700px; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
 .bullet-list { padding-left: 20px; line-height: 1.6; }
 .highlight { color: #00adb5; font-weight: bold; }
+
+.global-gifs { 
+    display: flex; 
+    gap: 15px; 
+    justify-content: center; 
+    margin: 20px 0; 
+}
+.global-gifs img { 
+    width: 48%; /* Prends presque la moitié de la largeur */
+    border-radius: 6px; 
+}
+
+/* Pour les 3 vidéos du Flashlight (3 colonnes) */
+.triple-gifs { 
+    display: flex; 
+    gap: 10px; 
+    margin: 20px 0; 
+}
+.gif-card { 
+    flex: 1; /* Chaque carte prend 1/3 de l'espace */
+    text-align: center; 
+}
+.gif-card img { 
+    width: 100%; 
+    border-radius: 6px; 
+    margin-bottom: 10px; 
+}
+.gif-card p { font-size: 0.9em; color: #aaa; }
