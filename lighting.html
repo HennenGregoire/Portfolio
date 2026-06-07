@@ -34,7 +34,7 @@
         <div class="ui-content">
 
             <p class="section-lead">
-                These lights are connected to gameplay events. When the player activates specific objectives, the lighting changes to provide clear visual feedback and guide attention toward the active element.
+                These lighting groups are connected to the GPE charge system. When the player powers a GPE, progress LEDs turn on step by step, and once the GPE reaches full charge, the related lights activate to confirm the objective state.
             </p>
 
             <div class="triple-gifs">
@@ -54,9 +54,12 @@
                 </div>
             </div>
 
-            <h4 class="ui-subtitle">How it works</h4>
+           <h4 class="ui-subtitle">How it works</h4>
             <p>
-                Each light group is controlled as a visual feedback system. When an objective is activated, the corresponding lights are enabled or intensified. This makes the interaction easier to read without relying only on UI, while also reinforcing the cinematic horror mood of the scene.
+                The lighting feedback is driven by the GPELoad system. As the GPE receives energy, the script updates a set of progress LEDs and their emissive materials. When the GPE reaches 100% charge, a UnityEvent is triggered, allowing the related gameplay lights to activate. At the same time, the script changes the LED light color and emissive shader color to green, making the fully charged state instantly readable for the player.
+            </p>
+            <p>
+                If the GPE is not maintained, it automatically discharges over time. When the stored energy reaches zero, the system triggers the discharge event and resets both the Light components and emissive materials to their original colors.
             </p>
 
         </div>
