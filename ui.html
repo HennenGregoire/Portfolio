@@ -13,9 +13,10 @@
 
 </head>
 
-<body>
+<body class="page-ui">
 
     <header>
+        <div class="header-orb"></div>
         <h1>Gregoire Hennen</h1>
         <h2>Technical Artist</h2>
         <nav>
@@ -30,10 +31,13 @@
     </header>
 
     <main>
+        <section class="page-hero">
+            <p class="page-kicker">UI Architecture • Player Experience</p>
         <h3>UI Systems & Menu Architecture</h3>
         <p class="page-intro">
             This section presents the complete UI framework I developed in Unity: animated menu panels, pause-state logic, quest display behavior, persistent audio and graphics settings, input-device detection, and gamepad icon data mapping.
         </p>
+        </section>
 
         
 
@@ -685,6 +689,10 @@ public void BackMenu()
         </details>
 
     </main>
+
+    <footer class="site-footer">
+        <p>Gregoire Hennen — Technical Artist Portfolio</p>
+    </footer>
 
 <script>
     const currentPage = window.location.pathname.split("/").pop();
