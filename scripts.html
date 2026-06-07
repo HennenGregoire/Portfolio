@@ -12,9 +12,10 @@
     <script>hljs.highlightAll();</script>
 </head>
 
-<body>
+<body class="page-scripts">
 
     <header>
+        <div class="header-orb"></div>
         <h1>Gregoire Hennen</h1>
         <h2>Technical Artist</h2>
         <nav>
@@ -29,10 +30,13 @@
     </header>
 
     <main>
+        <section class="page-hero">
+            <p class="page-kicker">C# Systems • Gameplay Integration</p>
         <h3>Scripts</h3>
         <p class="page-intro">
         This section presents the scripts I worked on. I mainly assisted our programmer, Maxime, in the development of several scripts. On my side, I created the Flashlight Battery script as well as the Light On/Off script, which controls turning the flashlight on and off.        
         </p>
+        </section>
 
         <details class="shader-accordion">
     <summary>Flashlight Battery & Energy Management System</summary>
@@ -398,6 +402,10 @@ public void TurnOnProjector()
     </div>
 </details>
     </main>
+
+    <footer class="site-footer">
+        <p>Gregoire Hennen — Technical Artist Portfolio</p>
+    </footer>
 
 <script>
     const currentPage = window.location.pathname.split("/").pop();
