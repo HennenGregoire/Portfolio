@@ -12,9 +12,10 @@
     <script>hljs.highlightAll();</script>
 </head>
     
-<body>
+<body class="page-tools">
 
     <header>
+        <div class="header-orb"></div>
         <h1>Gregoire Hennen</h1>
         <h2>Technical Artist</h2>
         <nav>
@@ -29,10 +30,13 @@
     </header>
     
     <main>
+        <section class="page-hero">
+            <p class="page-kicker">Unity Editor • Pipeline Tools</p>
         <h3>Tools</h3>
         <p class="page-intro">
             This section presents all the tools I have developed to optimize the team's workflow and accelerate development.
         </p>
+        </section>
 
         <details class="tool-accordion">
             <summary>Procedural 3D Texture Generator (Unity Editor / C#)</summary>
@@ -356,6 +360,10 @@ _collider.sharedMesh = _mesh;</code></pre>
         </details>
 
     </main>
+    <footer class="site-footer">
+        <p>Gregoire Hennen — Technical Artist Portfolio</p>
+    </footer>
+
 <script>
     // Récupère le nom de la page actuelle (ex: "shaders.html")
     const currentPage = window.location.pathname.split("/").pop();
