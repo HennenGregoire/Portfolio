@@ -34,7 +34,7 @@
         <div class="ui-content">
 
             <p class="section-lead">
-                These lighting groups are connected to the GPE charge system. When the player powers a GPE, progress LEDs turn on step by step, and once the GPE reaches full charge, the related lights activate to confirm the objective state.
+                These indicator lights are linked to the GPE charging system. When the player activates a GPE, the progress LEDs light up gradually, and once the GPE is fully charged, the bulbs turn green to show the player that the GPE is 100% charged.
             </p>
 
             <div class="triple-gifs">
@@ -50,16 +50,17 @@
 
                 <div class="gif-card">
                     <img src="lighting-door-activation.gif" alt="Door lighting activation">
-                    <p><strong>Door:</strong> the door lighting changes state to clearly communicate progression and guide the player forward.</p>
+                    <p><strong>Door:</strong> the door opens once the charge reaches 100%.</p>
                 </div>
             </div>
 
            <h4 class="ui-subtitle">How it works</h4>
             <p>
-                The lighting feedback is driven by the GPELoad system. As the GPE receives energy, the script updates a set of progress LEDs and their emissive materials. When the GPE reaches 100% charge, a UnityEvent is triggered, allowing the related gameplay lights to activate. At the same time, the script changes the LED light color and emissive shader color to green, making the fully charged state instantly readable for the player.
+               Light feedback is handled by the GPELoad system. When the GPE receives power, the script updates a set of progress LEDs and their emissive materials. When the GPE reaches 100% charge, a Unity event is triggered. Simultaneously, the script changes the color of the LED and the emissive shader to green, instantly indicating to the player that the GPE is fully charged.
+
             </p>
             <p>
-                If the GPE is not maintained, it automatically discharges over time. When the stored energy reaches zero, the system triggers the discharge event and resets both the Light components and emissive materials to their original colors.
+               If the GPE is not powered, it automatically discharges after a certain time. When the stored energy reaches zero, the system triggers the discharge event and resets the light components and emissive materials to their original colors.
             </p>
 
         </div>
