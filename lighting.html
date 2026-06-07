@@ -7,8 +7,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="page-lighting">
 <header>
+        <div class="header-orb"></div>
     <h1>Gregoire Hennen</h1>
     <h2>Technical Artist</h2>
     <nav>
@@ -23,11 +24,14 @@
 </header>
 
 <main>
+        <section class="page-hero">
+            <p class="page-kicker">HDRP Lighting • Horror Atmosphere</p>
     <h3>Lighting & Atmosphere</h3>
 
     <p class="page-intro">
         This section presents the lighting work I handled for the project. The goal was to create a dark horror atmosphere while keeping important gameplay elements readable for the player.
     </p>
+        </section>
 
     <details class="ui-accordion">
         <summary>Interactive Lighting Feedback</summary>
@@ -89,6 +93,10 @@
         </div>
     </details>
 </main>
+
+    <footer class="site-footer">
+        <p>Gregoire Hennen — Technical Artist Portfolio</p>
+    </footer>
 
 <script>
     const currentPage = window.location.pathname.split("/").pop();
