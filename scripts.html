@@ -227,7 +227,176 @@ emissiveRenderers[i].SetPropertyBlock(_propBlock);</code></pre>
 
     </div>
 </details>
+<details class="shader-accordion">
+    <summary>Monster Shadow Patrol & Projector Reveal System</summary>
+    <div class="shader-content">
 
+        <p>
+            This system was designed to maintain tension inside the cinema room. Although the real monster cannot physically enter this area, a projected shadow and distant screams create the illusion that the creature is still nearby, preventing the player from feeling completely safe.
+        </p>
+
+        <div class="center-img-container">
+            <img src="MonsterShadow_Patrol_Inspector.png" alt="Monster Shadow Patrol Inspector">
+            <p class="media-caption">
+                Inspector setup with random destination points, movement speed, scream timing, animator reference and scream audio.
+            </p>
+        </div>
+
+        <div class="tech-row">
+            <div class="tech-desc">
+                <h4 style="color: #00adb5;">1. Random Patrol Movement</h4>
+                <p>
+                    The shadow monster moves between several destination points placed in the scene. Each time it reaches a point, the script randomly selects a new destination, making the movement less predictable.
+                </p>
+                <p>
+                    This unpredictability prevents players from learning a fixed pattern and helps the shadow feel like a living presence rather than a scripted loop.
+                </p>
+            </div>
+
+            <div class="tech-code">
+<pre><code class="language-cpp">
+void ChooseRandomNextPoint()
+{
+    if (destinationPoints.Length <= 1) return;
+
+    int newIndex = currentIndex;
+    while (newIndex == currentIndex)
+    {
+        newIndex = Random.Range(0, destinationPoints.Length);
+    }
+
+    currentIndex = newIndex;
+}</code></pre>
+            </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #333; margin: 30px 0;">
+
+        <div class="tech-row">
+            <div class="tech-desc">
+                <h4 style="color: #00adb5;">2. Random Scream Timing</h4>
+                <p>
+                    After a random delay, the monster stops moving and triggers a scream animation. During this short pause, the system reinforces the illusion that the creature is actively searching or reacting near the cinema room.
+                </p>
+                <p>
+                    The scream timing is randomized between a minimum and maximum value, which creates unpredictable moments of tension for the player.
+                </p>
+            </div>
+
+            <div class="tech-code">
+<pre><code class="language-cpp">
+IEnumerator ScreamRoutine()
+{
+    isScreaming = true;
+
+    animator.SetTrigger("Scream");
+
+    yield return new WaitForSeconds(screamDuration);
+
+    timer = 0f;
+    CalculateNextScreamTime();
+
+    isScreaming = false;
+}
+
+void CalculateNextScreamTime()
+{
+    timeUntilNextScream = Random.Range(
+        minTimeBetweenScreams,
+        maxTimeBetweenScreams
+    );
+}</code></pre>
+            </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #333; margin: 30px 0;">
+
+        <div class="tech-row">
+            <div class="tech-desc">
+                <h4 style="color: #00adb5;">3. Audio Feedback</h4>
+                <p>
+                    The scream sound is played through an AudioSource attached to the shadow monster. This adds spatial feedback to the projected silhouette and makes the event feel more present in the room.
+                </p>
+            </div>
+
+            <div class="tech-code">
+<pre><code class="language-cpp">
+public void PlayScreamSound()
+{
+    PlayRandom(audioSource, new AudioClip[] { screamSound });
+}
+
+private void PlayRandom(AudioSource source, AudioClip[] clips)
+{
+    if (source == null || clips == null || clips.Length == 0)
+        return;
+
+    AudioClip clip = clips[Random.Range(0, clips.Length)];
+
+    if (clip != null)
+        source.PlayOneShot(clip);
+}</code></pre>
+            </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #333; margin: 30px 0;">
+
+        <div class="tech-row">
+            <div class="tech-desc">
+                <h4 style="color: #00adb5;">4. Projector Activation</h4>
+                <p>
+                    The projector activation system was implemented by our programmer, Maxime. The <code>TurnOnProjector()</code> method is triggered through a UnityEvent and progressively increases the HDRP spotlight intensity while introducing random flickering.
+                </p>
+                <p>
+                    This creates the impression of an old cinema projector struggling to start before stabilizing, helping the shadow reveal feel more cinematic.
+                </p>
+            </div>
+
+            <div class="tech-code">
+<pre><code class="language-cpp">
+public void TurnOnProjector()
+{
+    if (parentObject != null)
+    {
+        parentObject.SetActive(true);
+    }
+
+    StopAllCoroutines();
+    StartCoroutine(TurnOnRoutine());
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="center-img-container">
+            <img src="FlickeringProjector_Inspector.png" alt="Flickering Projector Inspector">
+            <p class="media-caption">
+                Projector setup: HDRP target intensity, turn-on duration, flicker speed and flicker variance.
+            </p>
+        </div>
+
+        <div class="center-img-container">
+            <img src="monster-shadow-projector-reveal.gif" alt="Monster shadow revealed by projector">
+            <p class="media-caption">
+                Prototype test: the projector turns on and reveals the monster shadow moving on the cinema wall.
+            </p>
+        </div>
+
+        <div class="ui-note ui-note-warning">
+            <strong>Production note:</strong> this shadow projection remained an experimental prototype feature. I did not have enough time to fully polish the effect because other gameplay and production tasks had a higher priority during the prototype. The system still communicates the main intention: making the player feel unsafe in the cinema room, even if the monster cannot physically enter it.
+        </div>
+
+        <h4 style="color: #00adb5;">Portfolio Summary</h4>
+
+        <p>
+            This system combines AI presentation, animation, audio cues and lighting to create environmental storytelling without directly exposing the monster to the player. The projected shadow acts as a psychological threat, maintaining tension even in a location where the enemy cannot physically appear.
+        </p>
+
+        <p>
+            While the final projection effect remained at a prototype stage, it successfully demonstrated the intended gameplay goal: preserving uncertainty and preventing the player from considering the cinema room as a completely safe area. With additional production time, the projection quality, shadow readability and cinematic reveal timing could have been further refined.
+        </p>
+
+    </div>
+</details>
     </main>
 
 <script>
