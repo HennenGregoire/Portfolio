@@ -1,40 +1,96 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shaders - Gregoire Hennen</title>
-    
+    <title>Lighting - Gregoire Hennen</title>
     <link rel="stylesheet" href="style.css">
 </head>
-    
-<body>
-    <header>
-        <h1>Gregoire Hennen</h1>
-        <h2>Technical Artist</h2>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="vfx.html">VFX</a>
-            <a href="shaders.html">Shaders</a>
-            <a href="tools.html">Tools</a>
-            <a href="scripts.html">Scripts</a>
-            <a href="ui.html">UI</a>
-            <a href="lighting.html">Lighting</a>
-            
-        </nav>
-    </header>
-    <main>
-        <h3>Lighting</h3>
-    </main>
-    <script>
-    // Récupère le nom de la page actuelle (ex: "shaders.html")
-    const currentPage = window.location.pathname.split("/").pop();
 
-    // Sélectionne tous les liens dans la nav
+<body>
+<header>
+    <h1>Gregoire Hennen</h1>
+    <h2>Technical Artist</h2>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="vfx.html">VFX</a>
+        <a href="shaders.html">Shaders</a>
+        <a href="tools.html">Tools</a>
+        <a href="scripts.html">Scripts</a>
+        <a href="ui.html">UI</a>
+        <a href="lighting.html">Lighting</a>
+    </nav>
+</header>
+
+<main>
+    <h3>Lighting & Atmosphere</h3>
+
+    <p class="page-intro">
+        This section presents the lighting work I handled for the project. The goal was to create a dark horror atmosphere while keeping important gameplay elements readable for the player.
+    </p>
+
+    <details class="ui-accordion">
+        <summary>Interactive Lighting Feedback</summary>
+        <div class="ui-content">
+
+            <p class="section-lead">
+                These lights are connected to gameplay events. When the player activates specific objectives, the lighting changes to provide clear visual feedback and guide attention toward the active element.
+            </p>
+
+            <div class="triple-gifs">
+                <div class="gif-card">
+                    <img src="lighting-popcorn-machine-activation.gif" alt="Popcorn machine lighting activation">
+                    <p><strong>Popcorn Machine:</strong> the machine lighting turns on to show that the objective has been activated.</p>
+                </div>
+
+                <div class="gif-card">
+                    <img src="lighting-spot-activation.gif" alt="Spot lighting activation">
+                    <p><strong>Spot Light:</strong> the spotlight creates a strong focused beam, making the activated area more visible.</p>
+                </div>
+
+                <div class="gif-card">
+                    <img src="lighting-door-activation.gif" alt="Door lighting activation">
+                    <p><strong>Door:</strong> the door lighting changes state to clearly communicate progression and guide the player forward.</p>
+                </div>
+            </div>
+
+            <h4 class="ui-subtitle">How it works</h4>
+            <p>
+                Each light group is controlled as a visual feedback system. When an objective is activated, the corresponding lights are enabled or intensified. This makes the interaction easier to read without relying only on UI, while also reinforcing the cinematic horror mood of the scene.
+            </p>
+
+        </div>
+    </details>
+
+    <details class="ui-accordion">
+        <summary>General Lighting & Atmosphere</summary>
+        <div class="ui-content">
+
+            <p class="section-lead">
+                This video shows the general lighting mood of the level during navigation.
+            </p>
+
+            <div class="center-img-container">
+                <img src="lighting-general-ambience-walkthrough.gif" alt="General lighting ambience walkthrough">
+                <p class="media-caption">
+                    General lighting pass: dark corridors, warm practical lights, visible fog and strong flashlight contrast.
+                </p>
+            </div>
+
+            <h4 class="ui-subtitle">Atmosphere Breakdown</h4>
+            <p>
+                The scene uses a very dark base lighting setup with localized warm lights to create contrast and guide the eye. The fog makes the flashlight beam visible, which adds depth and reinforces the horror atmosphere. The result feels heavy, abandoned and cinematic, while still giving the player enough visual information to navigate the environment.
+            </p>
+
+        </div>
+    </details>
+</main>
+
+<script>
+    const currentPage = window.location.pathname.split("/").pop();
     const navLinks = document.querySelectorAll('nav a');
 
     navLinks.forEach(link => {
-        // Si le href du lien correspond à la page actuelle, ajoute la classe "active"
         if (link.getAttribute('href') === currentPage) {
             link.classList.add('active');
         }
