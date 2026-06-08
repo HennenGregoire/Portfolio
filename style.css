@@ -603,3 +603,64 @@ hr[style] {
 .home-card-link:hover h5 {
     color: #ffffff;
 }
+
+/* CONTACT */
+
+.contact-section {
+    margin: 50px 0;
+    padding: 35px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: linear-gradient(
+        180deg,
+        rgba(255,255,255,.05),
+        rgba(255,255,255,.02)
+    );
+    text-align: center;
+}
+
+.contact-section h4 {
+    color: var(--accent);
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.contact-card {
+    padding: 25px;
+    border: 1px solid var(--line);
+    border-radius: 15px;
+    background: rgba(255,255,255,.03);
+}
+
+.contact-card span {
+    display: block;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.contact-card h5 {
+    margin: 0 0 10px;
+    color: var(--accent);
+}
+
+.contact-card a {
+    color: var(--soft);
+    text-decoration: none;
+    word-break: break-word;
+}
+
+.contact-card a:hover {
+    color: var(--accent);
+}
+
+@media (max-width: 768px) {
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+}
