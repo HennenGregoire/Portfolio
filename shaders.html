@@ -258,7 +258,7 @@ for(int y=-1; y<=1; y++) {
 
                 
 
-                <div class="global-gifs">
+                 <div class="center-img-container">
 
                     <img src="OutlineShowcase.gif" style="width: 100%;" alt="Outline Effect Showcase">
 
@@ -272,7 +272,7 @@ for(int y=-1; y<=1; y++) {
 
                     <p style="font-size: 0.95em; color: #aaa; max-width: 800px; margin: 0 auto 15px auto; text-align: left;">Instead of assigning this material directly to objects, the effect is injected into the rendering pipeline using an HDRP <strong>Custom Pass (DrawRenderersCustomPass)</strong>. It dynamically filters objects matching the <em>"Interactible"</em> Layer Mask and overrides their rendering with the custom outline material.</p>
 
-                    <img src="Capture d'écran 2026-06-04 221747.png" alt="HDRP Custom Pass Configuration">
+                    <img src="ShaderGraph_Blackboard_Properties.png" alt="HDRP Custom Pass Configuration">
 
                 </div>
 
@@ -292,13 +292,12 @@ for(int y=-1; y<=1; y++) {
 
                         <p>By blending <code class="language-cpp">Time</code> multiplied by <code class="language-cpp">_PanSpeed</code>, the lines continuously slide across the surface. A <code class="language-cpp">Fraction</code> node clamps the values to create a loop, while math operations handle the line density and spacing via <code class="language-cpp">_LineWidth</code> and <code class="language-cpp">_LineSpacing</code>.</p>
 
-                        <img src="ShaderGraph_Step1_Lines.png" style="width: 100%; border-radius: 6px; margin-top: 10px;" alt="Procedural Lines Generation">
 
                     </div>
 
                     <div class="tech-code">
 
-                        <img src="ShaderGraph_Blackboard_Properties.png" style="width: 100%; border-radius: 4px;" alt="Shader Blackboard Properties">
+                        <img src="ShaderGraph_Step1_Lines.png"  style="width: 100%; border-radius: 4px;" alt="Procedural Lines Generation">
 
                     </div>
 
@@ -320,9 +319,9 @@ for(int y=-1; y<=1; y++) {
 
                     </div>
 
-                    <div class="tech-code" style="background: none; border: none; padding: 0;">
+                    <div class="tech-code">
 
-                        <img src="ShaderGraph_Step2_Smoothstep.png" style="width: 100%; border-radius: 6px;" alt="Smoothstep Masking">
+                        <img src="ShaderGraph_Step2_Smoothstep.png" style="width: 100%; border-radius: 4px;" alt="Smoothstep Masking">
 
                     </div>
 
@@ -340,7 +339,12 @@ for(int y=-1; y<=1; y++) {
 
                         <p>The procedural screen lines mask is inverted (<code class="language-cpp">One Minus</code>) and blended with the <code class="language-cpp">_FilterColor</code>, while the Fresnel receives its own <code class="language-cpp">_FresnelColor</code>. Everything is combined in an <code class="language-cpp">Add</code> node before outputting directly into the <strong>Emission</strong> channel of the final HDRP Fragment master node.</p>
 
-                        <img src="ShaderGraph_Step3_FresnelOutput.png" style="width: 100%; border-radius: 6px; margin-top: 10px;" alt="Fresnel and Master Node Output">
+
+                    </div>
+
+                    <div class="tech-code">
+
+                        <img src="ShaderGraph_Step3_FresnelOutput.png" style="width: 100%; border-radius: 4px;" alt="Fresnel and Master Node Output">
 
                     </div>
 
