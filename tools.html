@@ -53,11 +53,11 @@
                 
                 <ul class="bullet-list">
                     <li><span class="highlight">Unity Editor:</span> Built as a custom <code>EditorWindow</code> utility seamlessly integrated into the editor layout.</li>
-                    <li><span class="highlight">Unity Mathematics:</span> Leveraged the mathematical library to generate optimized 3D Simplex noise via the <code>noise.snoise()</code> function.</li>
+                    <li><span class="highlight">Unity Mathematics:</span> Leveraged the Unity Mathematics library to generate optimized 3D Simplex noise using the <code>noise.snoise()</code> function.</li>
                 </ul>
 
                 <h4 style="color: #00adb5; border-bottom: 1px solid #333; padding-bottom: 5px; margin-top: 30px;">Editor Window Configuration</h4>
-                <p>The wizard is accessible from the top menu via <span class="highlight">Tools → Générer Texture 3D Noise</span>. The user configures the generation through three primary parameters:</p>
+                <p>The wizard is accessible from the top menu under <span class="highlight">Tools → Générer Texture 3D Noise</span>. The user configures the generation through three primary parameters:</p>
 
                 <table>
                     <thead>
@@ -138,7 +138,7 @@ texture.Apply();
 
                 <h4 style="color: #00adb5; margin-top:30px;">Technical Breakdown & Future Outlooks</h4>
                 <p>This tool successfully created an immediate iteration loop for generating noise variants. However, because the computational logic currently runs entirely on the <strong>CPU</strong>, generation times can scale drastically up when computing higher resolution grids (e.g., 256³).</p>
-                <p style="font-style: italic; color: #aaa;">Project Note: As the pipeline pivoted away from using this specific resource type, further development on the tool was halted. Future steps would have involved shifting the generation mathematical load onto the GPU via Compute Shaders, alongside implementing Worley and Fractal Brownian Motion (FBM) noise algorithms.</p>
+                <p style="font-style: italic; color: #aaa;">Project Note: As the pipeline pivoted away from using this specific resource type, further development on the tool was halted. Future steps would have involved moving the generation workload to the GPU using Compute Shaders, alongside implementing Worley and Fractal Brownian Motion (FBM) noise algorithms.</p>
 
             </div>
         </details>
