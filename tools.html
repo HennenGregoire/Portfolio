@@ -204,13 +204,13 @@ texture.Apply();
                         <p>The algorithm wipes existing references before starting structural calculations. It instantiates a structured GameObject parent framework and caches spatial data in a <code>HashSet&lt;Vector3Int&gt;</code> to prevent overlapping assets during multi-room construction.</p>
                     </div>
                     <div class="tech-code">
-<pre><code class="language-cpp"><span class="c-keyword">public void</span> GenererMap()
+<pre><code class="language-cpp"><span class="c-keyword">public void</span> GenerateMap()
 {
-    NettoyerMap();
-    dallesInstanciees.Clear();
+    ClearMap();
+    spawnedTiles.Clear();    
     
-    conteneurMap = <span class="c-keyword">new</span> GameObject(<span class="c-var">"Map_Generee"</span>);
-    conteneurMap.transform.parent = <span class="c-keyword">this</span>.transform;
+    mapContainer = <span class="c-keyword">new</span> GameObject(<span class="c-var">"Generated_Map"</span>);
+    mapContainer.transform.parent = <span class="c-keyword">this</span>.transform;
 }</code></pre>
                     </div>
                 </div>
@@ -221,12 +221,12 @@ texture.Apply();
                         <p>The system loops over adjacent scene node data, extracting direction normals and offsetting standard module widths to prevent mesh z-fighting. It automatically isolates distance parameters before invoking line generation methods.</p>
                     </div>
                     <div class="tech-code">
-<pre><code class="language-cpp">Vector3 direction = pB.position - pA.position;
-Vector3 directionNormalisee = direction.normalized;
+<pre><code class="language-cpp"><span class="c-keyword">Vector3</span> direction = pB.position - pA.position;
+<span class="c-keyword">Vector3</span> normalizedDirection = direction.normalized;
 
-Vector3 positionDepartReelle = pA.position + (directionNormalisee * longueurCoin);
-Vector3 positionArriveeReelle = pB.position - (directionNormalisee * longueurCoin);
-<span class="c-keyword">float</span> distancePourMurs = (positionArriveeReelle - positionDepartReelle).magnitude;</code></pre>
+<span class="c-keyword">Vector3</span> actualStartPosition = pA.position + (normalizedDirection * cornerLength);
+<span class="c-keyword">Vector3</span> actualEndPosition = pB.position - (normalizedDirection * cornerLength);
+<span class="c-keyword">float</span> wallDistance = (actualEndPosition - actualStartPosition).magnitude;</code></pre>
                     </div>
                 </div>
 
@@ -236,19 +236,19 @@ Vector3 positionArriveeReelle = pB.position - (directionNormalisee * longueurCoi
                         <p>To avoid script lockups or memory overflows during iterative layout expansion, an internal loop monitor serves as a hard safety cutoff. It checks bounding collision sets and kills wave progression once max limits are reached.</p>
                     </div>
                     <div class="tech-code">
-<pre><code class="language-cpp"><span class="c-keyword">bool</span> auMoinsUneVagueActive = <span class="c-var">true</span>;
-<span class="c-keyword">int</span> etape = 1;
+<pre><code class="language-cpp"><span class="c-keyword">bool</span> atLeastOneWaveActive =  <span class="c-var">true</span>;
+<span class="c-keyword">int</span> step = 1;
 
-<span class="c-keyword">while</span> (auMoinsUneVagueActive && etape <= seuilSecuriteMax)
+<span class="c-keyword">while</span> (atLeastOneWaveActive && step <= maxSafetySteps)
 {
-    auMoinsUneVagueActive = <span class="c-var">false</span>;
+    atLeastOneWaveActive = <span class="c-var">false</span>;
     <span class="c-comment">// Wave generation loop logic...</span>
 }</code></pre>
                     </div>
                 </div>
 
                 <div class="center-img-container">
-                    <img src="map-generation-demo.gif" alt="Map Generation Real-time Demo">
+                    <img src="map-generation-demo2.gif" alt="Map Generation Real-time Demo">
                 </div>
 
                 <hr style="border: 0; border-top: 1px solid #333; margin: 40px 0;">
